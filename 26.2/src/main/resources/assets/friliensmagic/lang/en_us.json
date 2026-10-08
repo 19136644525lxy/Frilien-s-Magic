@@ -1,0 +1,13 @@
+{
+  "itemGroup.friliensmagic": "Example Mod Tab",
+  "block.friliensmagic.example_block": "Example Block",
+  "item.friliensmagic.example_item": "Example Item",
+
+  "friliensmagic.configuration.title": "Frilien's Magic Configs",
+  "friliensmagic.configuration.section.friliensmagic.common.toml": "Frilien's Magic Configs",
+  "friliensmagic.configuration.section.friliensmagic.common.toml.title": "Frilien's Magic Configs",
+  "friliensmagic.configuration.items": "Item List",
+  "friliensmagic.configuration.logDirtBlock": "Log Dirt Block",
+  "friliensmagic.configuration.magicNumberIntroduction": "Magic Number Text",
+  "friliensmagic.configuration.magicNumber": "Magic Number"
+}

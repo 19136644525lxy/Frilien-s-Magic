@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>芙莉莲所习魔法一览</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%236a7ba8' d='M7 3h10v3H7zM11 7h2v6l4 4-1.4 1.4L12 15l-3.6 3.4L7 17l4-4z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --bg:#f4f6fa;
+    --ink:#2e3850;
+    --ink-soft:#6b768b;
+    --card:#ffffff;
+    --line:#e2e8f2;
+    --blue:#6a7ba8;   --blue-soft:#eef2fb;
+    --red:#a65f5f;    --red-soft:#f9eeee;
+    --green:#5c8a70;  --green-soft:#eaf6f0;
+    --amber:#b5895a;  --amber-soft:#faf3e9;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Noto Sans SC','Microsoft YaHei','PingFang SC',sans-serif;
+    line-height:1.75;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px;}
+
+  /* ===== Hero ===== */
+  header{
+    padding:64px 0 30px;
+    text-align:center;
+    position:relative;
+  }
+  header .mark{
+    width:46px;height:46px;margin:0 auto 16px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--blue-soft);border-radius:14px;
+  }
+  header h1{
+    font-family:'Noto Serif SC','Songti SC',serif;
+    font-size:40px;font-weight:700;color:#33405e;letter-spacing:2px;
+  }
+  header .sub{
+    margin-top:14px;font-size:15px;color:var(--ink-soft);
+    max-width:620px;margin-left:auto;margin-right:auto;
+  }
+  header .tag{
+    display:inline-block;margin-top:20px;padding:5px 16px;
+    font-size:14px;color:#4a5a85;background:var(--blue-soft);
+    border-radius:999px;letter-spacing:1px;
+  }
+  .lead{
+    max-width:680px;margin:30px auto 0;padding:20px 24px;
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    font-size:14.5px;color:#48536b;text-align:left;
+  }
+  .lead b{color:var(--blue);}
+
+  /* ===== Section ===== */
+  section{margin-top:44px;}
+  .sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--line);padding-bottom:10px;margin-bottom:22px;}
+  .sec-head .no{
+    font-family:'Noto Serif SC',serif;font-size:26px;font-weight:700;line-height:1;
+  }
+  .sec-head h2{font-family:'Noto Serif SC','Songti SC',serif;font-size:24px;font-weight:700;color:#33405e;}
+  .sec-head p{font-size:14px;color:var(--ink-soft);}
+  .sec-blue .no,.sec-blue h2{color:var(--blue);}
+  .sec-red  .no,.sec-red  h2{color:var(--red);}
+  .sec-green .no,.sec-green h2{color:var(--green);}
+
+  /* 基础能力卡片 */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;
+  }
+  .card .t{font-weight:700;font-size:16px;color:#33405e;margin-bottom:6px;}
+  .card .d{font-size:14px;color:var(--ink-soft);}
+
+  /* 战斗魔法列表 */
+  .spell-list{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .spell{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+    display:flex;gap:14px;align-items:flex-start;
+  }
+  .spell .badge{
+    flex:0 0 auto;width:34px;height:34px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--red);
+  }
+  .spell .body .n{font-weight:700;font-size:15.5px;color:#33405e;}
+  .spell .body .n .en{font-weight:500;font-size:12.5px;color:#9aa4ba;margin-left:6px;}
+  .spell .body .d{font-size:14px;color:var(--ink-soft);margin-top:4px;}
+  .note-red{
+    margin-top:16px;padding:12px 16px;background:var(--red-soft);border-radius:10px;
+    font-size:14px;color:#8a4a4a;
+  }
+
+  /* 生活魔法标签 */
+  .tag-cloud{display:flex;flex-wrap:wrap;gap:10px;}
+  .chips{
+    background:var(--card);border:1px solid var(--line);border-radius:999px;
+    padding:8px 15px;font-size:14px;color:#33405e;display:flex;align-items:center;gap:8px;
+  }
+  .chips .dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex:0 0 auto;}
+  .note-green{
+    margin-top:18px;padding:14px 18px;background:var(--green-soft);border-radius:10px;
+    font-size:14px;color:#3f6a54;
+  }
+
+  /* ===== Footer ===== */
+  .summary{
+    margin-top:52px;padding:26px 30px;background:#e8edf6;border-radius:16px;
+  }
+  .summary h3{font-family:'Noto Serif SC',serif;font-size:19px;color:#33405e;margin-bottom:10px;}
+  .summary p{font-size:14.5px;color:#48536b;}
+  .summary p b{color:var(--blue);}
+  footer{margin:30px 0 50px;font-size:12.5px;color:#98a2b3;text-align:center;line-height:1.9;}
+
+  @media (max-width:760px){
+    header{padding:44px 0 22px;}
+    header h1{font-size:30px;}
+    .cards{grid-template-columns:1fr;}
+    .spell-list{grid-template-columns:1fr;}
+    .sec-head{flex-wrap:wrap;gap:6px;}
+    .sec-head p{width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== Hero ===== -->
+  <header>
+    <div class="mark">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#6a7ba8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 3h10v3H7z"/><path d="M11 7h2v5.5l4 3.6-1.4 1.5L12 14.6l-3.6 3L7 16.1l4-3.6z"/>
+      </svg>
+    </div>
+    <h1>芙莉莲所习魔法一览</h1>
+    <div class="sub">《葬送的芙莉莲》主角 · 活了千年的精灵族魔法使 · 一生都在「收集魔法」</div>
+    <div class="tag">葬送的芙莉莲 · Frieren</div>
+  </header>
+
+  <div class="lead">
+    芙莉莲的魔法体系，是<b>扎实的通用根基 + 强大的人类／弑魔战斗魔法 + 无数温情治愈的生活魔法</b>。她既是以改良版攻击魔法斩杀魔族的「葬送的芙莉莲」，也是为一句咒语收集一辈子、以此理解人类的温柔魔法使。这些看似「无用」的生活魔法，正是作品「旅途即意义」的核心表达。
+  </div>
+
+  <!-- ===== 一、基础能力 ===== -->
+  <section class="sec-blue">
+    <div class="sec-head">
+      <div class="no">壹</div>
+      <h2>基础能力</h2>
+      <p>魔法使通用的根基技能</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="t">魔力探知</div>
+        <div class="d">感知并追踪指定对象的魔力与所在位置，是魔法使的基础能力。</div>
+      </div>
+      <div class="card">
+        <div class="t">魔力隐藏／限制</div>
+        <div class="d">隐藏并限制自身魔力以避开侦测。师承伏拉梅，曾骗过魔族与队友海塔。</div>
+      </div>
+      <div class="card">
+        <div class="t">长距离魔法</div>
+        <div class="d">从远程发动魔法的能力，魔法使必备要素的组合技。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 二、战斗魔法 ===== -->
+  <section class="sec-red">
+    <div class="sec-head">
+      <div class="no">贰</div>
+      <h2>战斗魔法</h2>
+      <p>她的威名与「葬送」之名的来源</p>
+    </div>
+    <div class="spell-list">
+      <div class="spell">
+        <div class="badge">攻</div>
+        <div class="body">
+          <div class="n">攻击魔法<span class="en">Zoltraak</span></div>
+          <div class="d">原为魔族「腐烂贤者」古瓦尔的贯通魔法，芙莉莲与全人类魔法使共同解析，并开发出「弑魔魔法」，斩杀无数魔族。</div>
+        </div>
+      </div>
+      <div class="spell">
+        <div class="badge">防</div>
+        <div class="body">
+          <div class="n">防御魔法</div>
+          <div class="d">由攻击魔法延伸，张开屏障分散魔力攻击，威力强大但消耗巨大。</div>
+        </div>
+      </div>
+      <div class="spell">
+        <div class="badge">封</div>
+        <div class="body">
+          <div class="n">封印魔法</div>
+          <div class="d">将对象封印使其无法行动，曾封印「腐烂贤者」古瓦尔达八十年。</div>
+        </div>
+      </div>
+      <div class="spell">
+        <div class="badge">飞</div>
+        <div class="body">
+          <div class="n">飞行魔法</div>
+          <div class="d">令施法者在空中飞行移动。</div>
+        </div>
+      </div>
+      <div class="spell">
+        <div class="badge">爆</div>
+        <div class="body">
+          <div class="n">爆破魔法</div>
+          <div class="d">爆破头部周围区域，用于挣脱宝箱怪的撕咬，代价是烫头弄乱发型。</div>
+        </div>
+      </div>
+      <div class="spell">
+        <div class="badge">雷</div>
+        <div class="body">
+          <div class="n">破灭之雷<span class="en">Judradjim</span></div>
+          <div class="d">从法杖释放多道强力的定向雷电。</div>
+        </div>
+      </div>
+      <div class="spell">
+        <div class="badge">火</div>
+        <div class="body">
+          <div class="n">地狱业火<span class="en">Vollzanbel</span></div>
+          <div class="d">制造巨大火焰攻击，威力足以汽化岩石。</div>
+        </div>
+      </div>
+      <div class="spell">
+        <div class="badge">黑</div>
+        <div class="body">
+          <div class="n">破坏黑光</div>
+          <div class="d">制造巨大黑色光柱，可直接击破防御魔法并对后方造成损伤。</div>
+        </div>
+      </div>
+      <div class="spell">
+        <div class="badge">顶</div>
+        <div class="body">
+          <div class="n">视觉攻击<span class="en">魔法的顶峰</span></div>
+          <div class="d">凭空直接伤害敌人，毫无魔力波动、无法被察觉，被菲伦称作「魔法的顶峰」。</div>
+        </div>
+      </div>
+      <div class="spell">
+        <div class="badge">挤</div>
+        <div class="body">
+          <div class="n">魔力挤压<span class="en">Mana Strike</span></div>
+          <div class="d">将魔力压缩至极硬以造成毁灭性打击，学自大魔族索莉缇尔。</div>
+        </div>
+      </div>
+      <div class="spell">
+        <div class="badge">洞</div>
+        <div class="body">
+          <div class="n">黑洞魔法</div>
+          <div class="d">制造黑洞吞噬周围一切（由其镜像施放）。</div>
+        </div>
+      </div>
+    </div>
+    <div class="note-red">
+      注：破灭之雷、地狱业火、破坏黑光、视觉攻击、黑洞魔法等，曾于「零落的王墓」攻略中由芙莉莲的镜像分身施放。
+    </div>
+  </section>
+
+  <!-- ===== 三、生活／民间魔法 ===== -->
+  <section class="sec-green">
+    <div class="sec-head">
+      <div class="no">叁</div>
+      <h2>旅途蒐集的生活魔法</h2>
+      <p>「无用但温柔」的一类，构成她最温柔的旅程</p>
+    </div>
+    <div class="tag-cloud">
+      <div class="chips"><span class="dot"></span>变出花田</div>
+      <div class="chips"><span class="dot"></span>变出刨冰</div>
+      <div class="chips"><span class="dot"></span>变出热茶</div>
+      <div class="chips"><span class="dot"></span>变出火焰</div>
+      <div class="chips"><span class="dot"></span>漂浮物体</div>
+      <div class="chips"><span class="dot"></span>清洁铜像生锈</div>
+      <div class="chips"><span class="dot"></span>甜葡萄变酸</div>
+      <div class="chips"><span class="dot"></span>红苹果变青</div>
+      <div class="chips"><span class="dot"></span>寻找遗失饰品</div>
+      <div class="chips"><span class="dot"></span>捕鸟（50cm）</div>
+      <div class="chips"><span class="dot"></span>蛋壳不掉入蛋液</div>
+      <div class="chips"><span class="dot"></span>绕口令不卡壳</div>
+      <div class="chips"><span class="dot"></span>翻薄饼顺利</div>
+      <div class="chips"><span class="dot"></span>纸飞机飞得远</div>
+      <div class="chips"><span class="dot"></span>身体变暖</div>
+      <div class="chips"><span class="dot"></span>记忆传递</div>
+      <div class="chips"><span class="dot"></span>雾散 Erilfurate</div>
+      <div class="chips"><span class="dot"></span>视觉惑乱</div>
+      <div class="chips"><span class="dot"></span>魔力痕迹搜索</div>
+    </div>
+    <div class="note-green">
+      这些魔法看似无用，却贯穿她与辛美尔一行的旅途：变出花田是师祖伏拉梅临终传授、充满纪念意义；清洁铜像生锈用于清理辛美尔的雕像；寻找遗失饰品帮她找回辛美尔送的戒指。它们是芙莉莲理解人类、理解爱的钥匙。
+    </div>
+  </section>
+
+  <!-- ===== 总结 ===== -->
+  <div class="summary">
+    <h3>一句话总结</h3>
+    <p>芙莉莲一生所学，从<b>稳固的根基</b>到<b>强大的弑魔战斗魔法</b>，再到<b>无数温情的生活魔法</b>——她既是被魔族敬畏的「葬送的芙莉莲」，也是为一句无用的咒语走遍天涯、以此一点点理解人类的温柔魔法使。</p>
+  </div>
+
+  <footer>
+    内容整理参考：萌娘百科《芙莉莲》条目 · 《葬送的芙莉莲》动画官网魔法介绍<br>
+    本页为粉丝向知识汇总，仅供个人整理与交流
+  </footer>
+
+</div>
+</body>
+</html>
