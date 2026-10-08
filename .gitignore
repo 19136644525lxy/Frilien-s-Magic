@@ -33,6 +33,9 @@ temp/
 # Local-only
 26.2/
 tools/
+3d_models/
+blockbench/
+libs/
 texture_converter.py
 芙莉莲魔法汇总.html
 __pycache__/
