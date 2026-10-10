@@ -157,20 +157,20 @@ public final class QuestRegistry {
     // ===== 奖励池 =====
 
     private static void initRewards() {
-        // 低级药水（权重高，常见）
-        addReward("friliensmagic:potion_lv1", 1, 2, 30);
-        addReward("friliensmagic:potion_lv2", 1, 2, 25);
+        // 低级药水（权重高，常见，数量多）
+        addReward("friliensmagic:potion_lv1", 2, 5, 30);
+        addReward("friliensmagic:potion_lv2", 2, 5, 25);
         // 中级药水 + 原版矿物（中等权重）
-        addReward("friliensmagic:potion_lv3", 1, 1, 15);
+        addReward("friliensmagic:potion_lv3", 1, 3, 15);
         addReward("minecraft:iron_ingot", 4, 12, 15);
         addReward("minecraft:gold_ingot", 2, 6, 12);
         addReward("minecraft:redstone", 8, 16, 10);
         addReward("minecraft:diamond", 1, 3, 8);
         addReward("minecraft:emerald", 2, 5, 8);
         addReward("minecraft:lapis_lazuli", 4, 12, 8);
-        // 高级药水（低权重）
-        addReward("friliensmagic:potion_lv4", 1, 1, 6);
-        addReward("friliensmagic:potion_lv5", 1, 1, 3);
+        // 高级药水（低权重，数量提升）
+        addReward("friliensmagic:potion_lv4", 1, 3, 6);
+        addReward("friliensmagic:potion_lv5", 1, 2, 3);
         // 卷轴（低权重）
         addReward("friliensmagic:scroll_zoltraak", 1, 1, 4);
         addReward("friliensmagic:scroll_defense", 1, 1, 4);
