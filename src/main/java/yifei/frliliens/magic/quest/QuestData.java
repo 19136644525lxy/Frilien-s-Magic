@@ -13,14 +13,15 @@ import net.minecraft.network.codec.StreamCodec;
  * <p>以不可变 record 存储，配合 NeoForge {@code AttachmentType} 自动序列化与客户端同步。
  * 死亡后不保留（无 copyOnDeath），增加风险感。
  *
- * @param questId     委托模板 id（空字符串表示无委托）
- * @param type        委托类型（KILL/COLLECT）
- * @param targetId    目标注册 id（如 "minecraft:zombie"）
- * @param required    需要数量
- * @param progress    当前进度
- * @param acceptedAt  接受时间（游戏 tick）
- * @param pending     true=提议中未接受；false=已接受
- * @param lastQuestId 上一个委托模板 id（避免连续重复）
+ * @param questId      委托模板 id（空字符串表示无委托）
+ * @param type         委托类型（KILL/COLLECT）
+ * @param targetId     目标注册 id（如 "minecraft:zombie"）
+ * @param required     需要数量
+ * @param progress     当前进度
+ * @param acceptedAt   接受时间（游戏 tick）
+ * @param pending      true=提议中未接受；false=已接受
+ * @param lastQuestId  上一个委托模板 id（避免连续重复）
+ * @param villagerUuid 委托来源村民 UUID（空字符串表示无）
  */
 public record QuestData(
         String questId,
@@ -30,11 +31,12 @@ public record QuestData(
         int progress,
         long acceptedAt,
         boolean pending,
-        String lastQuestId
+        String lastQuestId,
+        String villagerUuid
 ) {
 
     /** 空委托。 */
-    public static final QuestData EMPTY = new QuestData("", QuestType.KILL, "", 0, 0, 0, false, "");
+    public static final QuestData EMPTY = new QuestData("", QuestType.KILL, "", 0, 0, 0, false, "", "");
 
     /** Codec：持久化到磁盘。 */
     public static final Codec<QuestData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -45,9 +47,10 @@ public record QuestData(
             Codec.INT.fieldOf("progress").forGetter(QuestData::progress),
             Codec.LONG.fieldOf("acceptedAt").forGetter(QuestData::acceptedAt),
             Codec.BOOL.fieldOf("pending").forGetter(QuestData::pending),
-            Codec.STRING.fieldOf("lastQuestId").forGetter(QuestData::lastQuestId)
-    ).apply(instance, (qid, t, tid, req, prog, at, pend, last) ->
-            new QuestData(qid, QuestType.fromSerial(t), tid, req, prog, at, pend, last)));
+            Codec.STRING.fieldOf("lastQuestId").forGetter(QuestData::lastQuestId),
+            Codec.STRING.fieldOf("villagerUuid").forGetter(QuestData::villagerUuid)
+    ).apply(instance, (qid, t, tid, req, prog, at, pend, last, vu) ->
+            new QuestData(qid, QuestType.fromSerial(t), tid, req, prog, at, pend, last, vu)));
 
     /** StreamCodec：网络同步（手动实现，因字段数超过 composite 上限）。 */
     public static final StreamCodec<ByteBuf, QuestData> STREAM_CODEC = new StreamCodec<>() {
@@ -61,6 +64,7 @@ public record QuestData(
                     ByteBufCodecs.VAR_INT.decode(buf),
                     ByteBufCodecs.VAR_LONG.decode(buf),
                     ByteBufCodecs.BOOL.decode(buf),
+                    ByteBufCodecs.STRING_UTF8.decode(buf),
                     ByteBufCodecs.STRING_UTF8.decode(buf));
         }
 
@@ -74,6 +78,7 @@ public record QuestData(
             ByteBufCodecs.VAR_LONG.encode(buf, q.acceptedAt());
             ByteBufCodecs.BOOL.encode(buf, q.pending());
             ByteBufCodecs.STRING_UTF8.encode(buf, q.lastQuestId());
+            ByteBufCodecs.STRING_UTF8.encode(buf, q.villagerUuid());
         }
     };
 
@@ -97,18 +102,23 @@ public record QuestData(
         return isActive() && progress >= required;
     }
 
+    /** 委托是否来自指定村民。 */
+    public boolean isFromVillager(java.util.UUID uuid) {
+        return uuid.toString().equals(villagerUuid);
+    }
+
     /** 接受委托：清除 pending 标记。 */
     public QuestData accept() {
-        return new QuestData(questId, type, targetId, required, progress, acceptedAt, false, lastQuestId);
+        return new QuestData(questId, type, targetId, required, progress, acceptedAt, false, lastQuestId, villagerUuid);
     }
 
     /** 更新进度。 */
     public QuestData withProgress(int newProgress) {
-        return new QuestData(questId, type, targetId, required, newProgress, acceptedAt, pending, lastQuestId);
+        return new QuestData(questId, type, targetId, required, newProgress, acceptedAt, pending, lastQuestId, villagerUuid);
     }
 
     /** 清除委托，保留 lastQuestId 避免连续重复。 */
     public QuestData clear() {
-        return new QuestData("", QuestType.KILL, "", 0, 0, 0, false, questId);
+        return new QuestData("", QuestType.KILL, "", 0, 0, 0, false, questId, "");
     }
 }

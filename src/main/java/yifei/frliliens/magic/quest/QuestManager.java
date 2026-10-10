@@ -63,9 +63,15 @@ public final class QuestManager {
     /**
      * 领取奖励。对于 COLLECT 类型，先校验并扣除物品。
      */
-    public static boolean claim(ServerPlayer player) {
+    public static boolean claim(ServerPlayer player, java.util.UUID villagerUuid) {
         QuestData quest = player.getData(ModAttachments.QUEST);
         if (!quest.isComplete()) {
+            return false;
+        }
+
+        // 校验委托来源村民
+        if (!quest.isFromVillager(villagerUuid)) {
+            player.sendSystemMessage(Component.translatable("quest.friliensmagic.info.wrong_villager"));
             return false;
         }
 
@@ -81,6 +87,10 @@ public final class QuestManager {
         QuestRegistry.RewardEntry reward = QuestRegistry.rollReward(player.serverLevel());
         ItemStack rewardStack = reward.createStack(player.serverLevel());
 
+        // 先保存显示信息（add 会修改原栈导致 count 归零）
+        Component rewardName = rewardStack.getHoverName();
+        int rewardCount = rewardStack.getCount();
+
         // 给予奖励（背包满则掉落地上）
         if (!player.getInventory().add(rewardStack)) {
             player.drop(rewardStack, false);
@@ -88,11 +98,14 @@ public final class QuestManager {
 
         // 提示
         player.sendSystemMessage(Component.translatable("quest.friliensmagic.reward_received",
-                rewardStack.getHoverName(), rewardStack.getCount()));
+                rewardName, rewardCount));
 
         // 音效
         player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.6F, 1.2F);
+
+        // 设置村民冷却（领奖后才开始冷却，而非接受时）
+        setVillagerCooldown(player, villagerUuid);
 
         // 清除委托（保留 lastQuestId 避免连续重复）
         player.setData(ModAttachments.QUEST, quest.clear());

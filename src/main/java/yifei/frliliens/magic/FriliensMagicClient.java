@@ -2,6 +2,7 @@ package yifei.frliliens.magic;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.entity.VillagerRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.neoforged.api.distmarker.Dist;
@@ -9,6 +10,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
@@ -20,6 +22,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import yifei.frliliens.magic.client.ModKeyBindings;
 import yifei.frliliens.magic.client.ManaBarKeyBindings;
 import yifei.frliliens.magic.client.ManaBarRenderer;
+import yifei.frliliens.magic.entity.ModEntities;
 import yifei.frliliens.magic.network.CastBasicAbilityPayload;
 
 /**
@@ -42,6 +45,7 @@ public class FriliensMagicClient {
         modEventBus.addListener(this::onRegisterShaders);
         modEventBus.addListener(this::onRegisterGuiLayers);
         modEventBus.addListener(this::onRegisterKeys);
+        modEventBus.addListener(this::onRegisterRenderers);
     }
 
     private void onClientSetup(FMLClientSetupEvent event) {
@@ -87,5 +91,11 @@ public class FriliensMagicClient {
         event.register(ModKeyBindings.MANA_SENSE_KEY);
         event.register(ModKeyBindings.MANA_HIDE_KEY);
         event.register(ModKeyBindings.SPELL_WHEEL_KEY);
+    }
+
+    /** 注册自定义实体渲染器（MOD 总线事件）。 */
+    private void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        // 委托村民复用原版村民渲染器
+        event.registerEntityRenderer(ModEntities.QUEST_VILLAGER.get(), VillagerRenderer::new);
     }
 }

@@ -36,11 +36,20 @@ public final class QuestMessages {
             // 无委托 → 生成新委托提议
             offerNewQuest(player, villager);
         } else if (quest.isPending()) {
-            // 已有 pending → 重新显示
-            sendQuestOffer(player, villager, quest);
+            // 待定委托来自其他村民 → 清除后生成新提议
+            if (!quest.isFromVillager(villager.getUUID())) {
+                offerNewQuest(player, villager);
+            } else {
+                sendQuestOffer(player, villager, quest);
+            }
         } else if (quest.isComplete()) {
-            // 已完成 → 领取奖励
-            sendClaimPrompt(player, villager);
+            // 已完成 → 领取奖励（仅来源村民可领）
+            if (quest.isFromVillager(villager.getUUID())) {
+                sendClaimPrompt(player, villager);
+            } else {
+                player.sendSystemMessage(Component.translatable("quest.friliensmagic.info.progress",
+                        quest.progress(), quest.required()));
+            }
         } else {
             // 进行中 → 进度
             sendQuestProgress(player, quest);
@@ -56,7 +65,7 @@ public final class QuestMessages {
             int firstColon = excludeId.indexOf(':');
             excludeTarget = excludeId.substring(firstColon + 1);
         }
-        QuestData pending = QuestRegistry.generateQuest(player.serverLevel(), excludeTarget);
+        QuestData pending = QuestRegistry.generateQuest(player.serverLevel(), excludeTarget, villager.getUUID());
         player.setData(ModAttachments.QUEST, pending);
         sendQuestOffer(player, villager, pending);
     }
@@ -84,9 +93,10 @@ public final class QuestMessages {
         player.sendSystemMessage(Component.translatable("quest.friliensmagic.info.complete"));
         player.sendSystemMessage(buildQuestDescription(quest));
 
+        String uuid = villager.getUUID().toString();
         MutableComponent buttons = Component.empty()
                 .append(createButton("quest.friliensmagic.button.claim",
-                        "/friliensmagic quest claim",
+                        "/friliensmagic quest claim " + uuid,
                         "quest.friliensmagic.button.claim.hover"))
                 .append(Component.literal("  "))
                 .append(createButton("quest.friliensmagic.button.abandon",

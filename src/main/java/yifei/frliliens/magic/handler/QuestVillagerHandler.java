@@ -10,6 +10,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import yifei.frliliens.magic.attachment.ModAttachments;
 import yifei.frliliens.magic.config.Config;
+import yifei.frliliens.magic.entity.QuestVillagerEntity;
+import yifei.frliliens.magic.quest.QuestData;
 import yifei.frliliens.magic.quest.QuestMessages;
 import yifei.frliliens.magic.quest.QuestVillagerData;
 
@@ -31,10 +33,21 @@ public class QuestVillagerHandler {
      */
     @SubscribeEvent
     public void onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (!(event.getEntity() instanceof Villager villager)) {
+        if (event.getLevel().isClientSide()) {
             return;
         }
-        if (event.getLevel().isClientSide()) {
+
+        // 自定义实体（刷怪蛋生成）——必定标记
+        if (event.getEntity() instanceof QuestVillagerEntity qve) {
+            QuestVillagerData data = qve.getData(ModAttachments.QUEST_VILLAGER);
+            if (!data.isQuestGiver()) {
+                markAsQuestVillager(qve, data);
+            }
+            return;
+        }
+
+        // 原版村民——概率标记
+        if (!(event.getEntity() instanceof Villager villager)) {
             return;
         }
 
@@ -54,15 +67,15 @@ public class QuestVillagerHandler {
             return;
         }
 
-        // 标记为委托村民
+        markAsQuestVillager(villager, data);
+    }
+
+    /** 统一标记委托村民属性。 */
+    private void markAsQuestVillager(Villager villager, QuestVillagerData data) {
         villager.setData(ModAttachments.QUEST_VILLAGER, data.markAsQuestGiver());
         villager.setCustomName(Component.translatable("entity.friliensmagic.quest_villager"));
         villager.setCustomNameVisible(true);
-
-        // 持续发光（穿墙可见轮廓）
         villager.setGlowingTag(true);
-
-        // 不计入生物刷新上限：设置持久化，防止原版因 mob cap 而清除
         villager.setPersistenceRequired();
     }
 
@@ -93,11 +106,16 @@ public class QuestVillagerHandler {
             return;
         }
 
-        // 冷却检查
-        long currentTick = player.serverLevel().getGameTime();
-        if (data.isOnCooldown(currentTick)) {
-            player.sendSystemMessage(Component.translatable("quest.friliensmagic.npc.cooldown"));
-            return;
+        // 冷却检查：无委托或待定委托来自其他村民时需要检查（会生成新委托）
+        QuestData quest = player.getData(ModAttachments.QUEST);
+        boolean needNewQuest = !quest.hasQuest()
+                || (quest.isPending() && !quest.isFromVillager(villager.getUUID()));
+        if (needNewQuest) {
+            long currentTick = player.serverLevel().getGameTime();
+            if (data.isOnCooldown(currentTick)) {
+                player.sendSystemMessage(Component.translatable("quest.friliensmagic.npc.cooldown"));
+                return;
+            }
         }
 
         QuestMessages.sendQuestDialog(player, villager);

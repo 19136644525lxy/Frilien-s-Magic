@@ -112,7 +112,7 @@ public final class QuestRegistry {
      * 原理：50% 概率选击杀/收集，从对应池中按权重选取目标，
      * 在目标的 minCount~maxCount 范围内随机生成需求量。
      */
-    public static QuestData generateQuest(ServerLevel level, String lastTargetId) {
+    public static QuestData generateQuest(ServerLevel level, String lastTargetId, java.util.UUID villagerUuid) {
         // 随机委托类型（50/50）
         boolean isKill = level.getRandom().nextBoolean();
         CopyOnWriteArrayList<QuestTarget> pool = isKill ? KILL_POOL : COLLECT_POOL;
@@ -129,7 +129,7 @@ public final class QuestRegistry {
         String questId = type.serialName() + ":" + target.targetId();
 
         return new QuestData(questId, type, target.targetId(), required, 0,
-                level.getGameTime(), true, lastTargetId);
+                level.getGameTime(), true, lastTargetId, villagerUuid.toString());
     }
 
     /** 按权重随机选取目标，排除 excludeTargetId。 */

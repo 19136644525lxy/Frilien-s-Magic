@@ -72,6 +72,16 @@ public final class ModCreativeTabs {
                     })
                     .build());
 
+    /** 杂项工具（刷怪蛋等）。 */
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> UTILITY =
+            TABS.register("utility", () -> CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup.friliensmagic.utility"))
+                    .icon(() -> ModItems.QUEST_VILLAGER_SPAWN_EGG.get().getDefaultInstance())
+                    .displayItems((parameters, output) -> {
+                        output.accept(ModItems.QUEST_VILLAGER_SPAWN_EGG.get());
+                    })
+                    .build());
+
     private ModCreativeTabs() {
     }
 }

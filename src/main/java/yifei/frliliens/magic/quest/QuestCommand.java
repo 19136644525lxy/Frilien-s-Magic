@@ -37,7 +37,8 @@ public final class QuestCommand {
                                 .then(Commands.argument("villager", StringArgumentType.string())
                                         .executes(QuestCommand::decline)))
                         .then(Commands.literal("claim")
-                                .executes(QuestCommand::claim))
+                                .then(Commands.argument("villager", StringArgumentType.string())
+                                        .executes(QuestCommand::claim)))
                         .then(Commands.literal("abandon")
                                 .executes(QuestCommand::abandon))));
     }
@@ -60,17 +61,8 @@ public final class QuestCommand {
             return 0;
         }
 
-        // 冷却校验
-        QuestVillagerData vd = villager.getData(ModAttachments.QUEST_VILLAGER);
-        long tick = player.serverLevel().getGameTime();
-        if (vd.isOnCooldown(tick)) {
-            player.sendSystemMessage(Component.translatable("quest.friliensmagic.villager_on_cooldown"));
-            return 0;
-        }
-
-        // 接受 + 设置冷却
+        // 接受（冷却在领奖时设置，而非接受时）
         QuestManager.accept(player);
-        QuestManager.setVillagerCooldown(player, villager.getUUID());
         return 1;
     }
 
@@ -84,7 +76,15 @@ public final class QuestCommand {
     /** 领取奖励。 */
     private static int claim(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
-        if (!QuestManager.claim(player)) {
+        String uuidStr = StringArgumentType.getString(ctx, "villager");
+        java.util.UUID uuid;
+        try {
+            uuid = java.util.UUID.fromString(uuidStr);
+        } catch (IllegalArgumentException e) {
+            player.sendSystemMessage(Component.translatable("quest.friliensmagic.villager_not_found"));
+            return 0;
+        }
+        if (!QuestManager.claim(player, uuid)) {
             player.sendSystemMessage(Component.translatable("quest.friliensmagic.info.no_quest"));
         }
         return 1;

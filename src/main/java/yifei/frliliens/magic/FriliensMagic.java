@@ -12,6 +12,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -19,6 +20,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import yifei.frliliens.magic.attachment.ModAttachments;
 import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.effect.ModEffects;
+import yifei.frliliens.magic.entity.ModEntities;
 import yifei.frliliens.magic.handler.FlightHandler;
 import yifei.frliliens.magic.handler.ManaConcealHandler;
 import yifei.frliliens.magic.handler.ManaRegenHandler;
@@ -49,11 +51,13 @@ public class FriliensMagic {
         // hand each DeferredRegister to the mod event bus so its contents get registered
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
+        ModEntities.ENTITY_TYPES.register(modEventBus);
         ModAttachments.ATTACHMENT_TYPES.register(modEventBus);
         ModLootModifiers.GLM.register(modEventBus);
         ModEffects.EFFECTS.register(modEventBus);
 
         modEventBus.addListener(this::addCreative);
+        modEventBus.addListener(this::onRegisterAttributes);
 
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(new ManaRegenHandler());
@@ -91,6 +95,12 @@ public class FriliensMagic {
             event.accept(ModItems.FRIEREN_STAFF);
             event.accept(ModItems.PHIREN_STAFF);
         }
+    }
+
+    /** 注册自定义实体属性（Mob 子类必须在加载期注册属性才能生成）。 */
+    private void onRegisterAttributes(EntityAttributeCreationEvent event) {
+        event.put(ModEntities.QUEST_VILLAGER.get(),
+                net.minecraft.world.entity.npc.Villager.createAttributes().build());
     }
 
     @SubscribeEvent

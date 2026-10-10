@@ -1,10 +1,12 @@
 package yifei.frliliens.magic.item;
 
 import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import yifei.frliliens.magic.FriliensMagic;
+import yifei.frliliens.magic.entity.ModEntities;
 import yifei.frliliens.magic.spell.SpellRegistry;
 
 /**
@@ -134,6 +136,14 @@ public final class ModItems {
     public static final DeferredItem<ShavedIceItem> SHAVED_ICE =
             ITEMS.registerItem("shaved_ice", ShavedIceItem::new,
                     new Item.Properties().stacksTo(64));
+
+    // ===== 刷怪蛋 =====
+    /** 委托村民刷怪蛋：直接生成已标记的委托村民。 */
+    public static final DeferredItem<DeferredSpawnEggItem> QUEST_VILLAGER_SPAWN_EGG =
+            ITEMS.registerItem("quest_villager_spawn_egg",
+                    p -> new DeferredSpawnEggItem(ModEntities.QUEST_VILLAGER,
+                            0x9370DB, 0xFFD700, p),
+                    new Item.Properties());
 
     private ModItems() {
     }

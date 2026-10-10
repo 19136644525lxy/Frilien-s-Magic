@@ -4,6 +4,7 @@
   "itemGroup.friliensmagic.scrolls": "Frilien's Magic - Scrolls",
   "itemGroup.friliensmagic.potions": "Frilien's Magic - Potions",
   "itemGroup.friliensmagic.food": "Frilien's Magic - Food",
+  "itemGroup.friliensmagic.utility": "Frilien's Magic - Utility",
 
   "item.friliensmagic.frieren_staff": "Frieren's Staff",
   "item.friliensmagic.phiren_staff": "Phiren's Staff",
@@ -27,6 +28,8 @@
   "item.friliensmagic.scroll_float": "Spell Scroll: Float",
   "item.friliensmagic.scroll_clean": "Spell Scroll: Clean",
   "item.friliensmagic.shaved_ice": "Shaved Ice",
+
+  "item.friliensmagic.quest_villager_spawn_egg": "Quest Villager Spawn Egg",
 
   "tooltip.friliensmagic.spell_name": "Spell: %s",
   "tooltip.friliensmagic.mana_cost": "Mana Cost: %s",
@@ -108,6 +111,7 @@
   "quest.friliensmagic.info.progress": "Progress: %d/%d",
   "quest.friliensmagic.info.no_quest": "No active quest.",
   "quest.friliensmagic.info.no_pending": "No pending quest to accept.",
+  "quest.friliensmagic.info.wrong_villager": "§cThis quest is not from this villager. Find the original quest giver.",
   "quest.friliensmagic.accepted": "§aQuest accepted.",
   "quest.friliensmagic.declined": "§7Quest declined.",
   "quest.friliensmagic.abandoned": "§cQuest abandoned.",

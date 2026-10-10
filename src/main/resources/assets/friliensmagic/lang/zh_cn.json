@@ -4,6 +4,7 @@
   "itemGroup.friliensmagic.scrolls": "芙莉莲的魔法·卷轴",
   "itemGroup.friliensmagic.potions": "芙莉莲的魔法·药水",
   "itemGroup.friliensmagic.food": "芙莉莲的魔法·食物",
+  "itemGroup.friliensmagic.utility": "芙莉莲的魔法·杂项",
 
   "item.friliensmagic.frieren_staff": "芙莉莲的法杖",
   "item.friliensmagic.phiren_staff": "菲伦的法杖",
@@ -27,6 +28,8 @@
   "item.friliensmagic.scroll_float": "法术卷轴·漂浮",
   "item.friliensmagic.scroll_clean": "法术卷轴·清洁",
   "item.friliensmagic.shaved_ice": "刨冰",
+
+  "item.friliensmagic.quest_villager_spawn_egg": "委托村民刷怪蛋",
 
   "tooltip.friliensmagic.spell_name": "法术：%s",
   "tooltip.friliensmagic.mana_cost": "魔力消耗：%s",
@@ -108,6 +111,7 @@
   "quest.friliensmagic.info.progress": "当前进度：%d/%d",
   "quest.friliensmagic.info.no_quest": "当前没有委托。",
   "quest.friliensmagic.info.no_pending": "没有待接受的委托。",
+  "quest.friliensmagic.info.wrong_villager": "§c这个委托不是从这个村民那里接的，请找回原委托村民。",
   "quest.friliensmagic.accepted": "§a已接受委托。",
   "quest.friliensmagic.declined": "§7已拒绝委托。",
   "quest.friliensmagic.abandoned": "§c已放弃委托。",
