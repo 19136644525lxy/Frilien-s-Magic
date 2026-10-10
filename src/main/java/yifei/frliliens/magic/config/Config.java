@@ -56,6 +56,23 @@ public final class Config {
             .comment("Whether to show the mana value text on the bar")
             .define("manaBarShowText", true);
 
+    // ===== 委托系统 =====
+
+    /** 委托村民刷新概率（Nitwit 中标记比例）。 */
+    public static final ModConfigSpec.DoubleValue QUEST_VILLAGER_CHANCE = BUILDER
+            .comment("Probability that a Nitwit villager becomes a quest giver")
+            .defineInRange("questVillagerChance", 0.15D, 0.0D, 1.0D);
+
+    /** 委托村民冷却时间（tick，6000=5分钟）。 */
+    public static final ModConfigSpec.IntValue QUEST_VILLAGER_COOLDOWN = BUILDER
+            .comment("Quest villager cooldown in ticks after accept/decline (6000 = 5 min)")
+            .defineInRange("questVillagerCooldown", 6000, 0, 72000);
+
+    /** 委托收集进度检查间隔（tick）。 */
+    public static final ModConfigSpec.IntValue QUEST_COLLECT_CHECK_INTERVAL = BUILDER
+            .comment("Interval in ticks to check collect quest progress")
+            .defineInRange("questCollectCheckInterval", 100, 20, 600);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {

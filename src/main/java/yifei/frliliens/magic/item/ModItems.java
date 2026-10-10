@@ -117,6 +117,18 @@ public final class ModItems {
                     p -> new SpellScrollItem(p, SpellRegistry.get("shaved_ice")),
                     new Item.Properties().stacksTo(16));
 
+    /** 漂浮魔法卷轴（贴图：scroll_sage）。 */
+    public static final DeferredItem<SpellScrollItem> SCROLL_FLOAT =
+            ITEMS.registerItem("scroll_float",
+                    p -> new SpellScrollItem(p, SpellRegistry.get("float")),
+                    new Item.Properties().stacksTo(16));
+
+    /** 清洁魔法卷轴（贴图：scroll_deepblue）。 */
+    public static final DeferredItem<SpellScrollItem> SCROLL_CLEAN =
+            ITEMS.registerItem("scroll_clean",
+                    p -> new SpellScrollItem(p, SpellRegistry.get("clean")),
+                    new Item.Properties().stacksTo(16));
+
     // ===== 食物 =====
     /** 刨冰：恢复饥饿，给予速度提升。 */
     public static final DeferredItem<ShavedIceItem> SHAVED_ICE =

@@ -2,6 +2,7 @@ package yifei.frliliens.magic.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.joml.Matrix4f;
 
@@ -21,6 +22,7 @@ import yifei.frliliens.magic.attachment.ModAttachments;
 import yifei.frliliens.magic.network.SelectSpellPayload;
 import yifei.frliliens.magic.spell.Spell;
 import yifei.frliliens.magic.spell.SpellRegistry;
+import yifei.frliliens.magic.spell.StaffSpells;
 
 /**
  * 法术选择轮盘。
@@ -43,20 +45,46 @@ public class SpellWheelScreen extends Screen {
     /** 中心头像渲染尺寸（基准）。 */
     private static final int BASE_CENTER_SIZE = 36;
 
-    /** 战斗法术 id 列表（排除基础能力）。 */
-    private static final List<String> COMBAT_SPELLS = List.of(
-            "zoltraak", "defense", "flight", "judradjim",
-            "vollzanbel", "black_light", "mana_strike", "seal", "blast", "shaved_ice");
+    /**
+     * 法杖注册名 → 轮盘中心头像。
+     *
+     * <p>记录纹理路径与像素尺寸。<b>尺寸必须是 2 的幂</b>：Minecraft 对非 2 次幂的
+     * 独立贴图生成 mipmap 会失败，表现为整张图渲染成空白。两张头像都已归一化成
+     * 256×256（画师原图是 1045×1044 / 900×815），换图时请注意保持。
+     *
+     * <p>放在客户端而不是 {@link yifei.frliliens.magic.item.StaffItem} 里，
+     * 是为了不让服务端代码引用客户端资源路径。
+     */
+    private record Portrait(String path, int texW, int texH) {
+    }
 
-    /** 当前已学的战斗法术。 */
+    private static final Map<String, Portrait> PORTRAITS = Map.of(
+            "frieren_staff", new Portrait("textures/gui/frieren_1.png", 256, 256),
+            "phiren_staff", new Portrait("textures/gui/fern.png", 256, 256));
+
+    /** 默认头像（未知法杖时）。 */
+    private static final Portrait DEFAULT_PORTRAIT =
+            new Portrait("textures/gui/frieren_1.png", 256, 256);
+
+    /** 当前法杖的物品注册名。 */
+    private final String staffId;
+    /** 当前法杖对应的头像。 */
+    private final Portrait portrait;
+
+    /** 本把法杖支持、且玩家已学的战斗法术。 */
     private final List<Spell> learnedCombat = new ArrayList<>();
     /** 当前选中的扇区索引（页内）。 */
     private int selectedIndex = -1;
     /** 当前页码（从 0 开始）。 */
     private int currentPage = 0;
 
-    public SpellWheelScreen() {
+    /**
+     * @param staffId 手持法杖的物品注册名，决定轮盘显示哪些法术与哪个头像
+     */
+    public SpellWheelScreen(String staffId) {
         super(Component.translatable("screen.friliensmagic.spell_wheel.title"));
+        this.staffId = staffId;
+        this.portrait = PORTRAITS.getOrDefault(staffId, DEFAULT_PORTRAIT);
     }
 
     @Override
@@ -66,7 +94,8 @@ public class SpellWheelScreen extends Screen {
             return;
         }
         LearnedSpellsData learned = player.getData(ModAttachments.LEARNED_SPELLS);
-        for (String id : COMBAT_SPELLS) {
+        // 只列出「本把法杖支持」且「已学会」的法术
+        for (String id : StaffSpells.forStaff(staffId)) {
             if (learned.hasLearned(id)) {
                 Spell spell = SpellRegistry.get(id);
                 if (spell != null) {
@@ -97,8 +126,12 @@ public class SpellWheelScreen extends Screen {
         int cy = this.height / 2;
 
         if (learnedCombat.isEmpty()) {
+            // 区分「这把法杖没有法术」和「有法术但还没学会」，否则提示会误导
+            boolean staffHasSpells = !StaffSpells.forStaff(staffId).isEmpty();
             guiGraphics.drawCenteredString(this.font,
-                    Component.translatable("message.friliensmagic.no_spell_learned"),
+                    Component.translatable(staffHasSpells
+                            ? "message.friliensmagic.no_spell_learned"
+                            : "message.friliensmagic.no_spell_for_staff"),
                     cx, cy, 0xFFFFFF);
             return;
         }
@@ -129,10 +162,11 @@ public class SpellWheelScreen extends Screen {
         // 绘制分割线
         drawDividingLines(guiGraphics, cx, cy, BASE_RING_INNER, BASE_RING_OUTER, count);
 
-        // 中心头像
+        // 中心头像（按法杖区分）
         ResourceLocation centerTex = ResourceLocation.fromNamespaceAndPath(
-                FriliensMagic.MODID, "textures/gui/frieren_1.png");
-        drawScaledTexture(guiGraphics, centerTex, cx, cy, BASE_CENTER_SIZE, 1045, 1044);
+                FriliensMagic.MODID, portrait.path());
+        drawScaledTexture(guiGraphics, centerTex, cx, cy, BASE_CENTER_SIZE,
+                portrait.texW(), portrait.texH());
 
         // 绘制图标
         float iconRadius = (BASE_RING_INNER + BASE_RING_OUTER) / 2;
@@ -220,12 +254,19 @@ public class SpellWheelScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    /** 以中心点绘制缩放纹理，用 poseStack.scale 缩放避免 UV 越界。 */
+    /**
+     * 以中心点绘制缩放纹理，用 poseStack.scale 缩放避免 UV 越界。
+     *
+     * <p>偏移量按缩放后的<b>实际</b>宽高算，而不是统一用 {@code drawSize}，
+     * 否则非正方形贴图会偏离中心。
+     */
     private void drawScaledTexture(GuiGraphics guiGraphics, ResourceLocation tex,
                                    int cx, int cy, int drawSize, int texW, int texH) {
         float scale = (float) drawSize / Math.max(texW, texH);
+        float halfW = texW * scale / 2f;
+        float halfH = texH * scale / 2f;
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(cx - drawSize / 2f, cy - drawSize / 2f, 0);
+        guiGraphics.pose().translate(cx - halfW, cy - halfH, 0);
         guiGraphics.pose().scale(scale, scale, 1);
         guiGraphics.blit(tex, 0, 0, 0, 0, texW, texH, texW, texH);
         guiGraphics.pose().popPose();
@@ -327,7 +368,7 @@ public class SpellWheelScreen extends Screen {
             if (selectedIndex >= 0) {
                 List<Spell> pageSpells = getPageSpells();
                 if (selectedIndex < pageSpells.size()) {
-                    SelectSpellPayload.send(pageSpells.get(selectedIndex).getId());
+                    SelectSpellPayload.send(staffId, pageSpells.get(selectedIndex).getId());
                     this.onClose();
                     return true;
                 }

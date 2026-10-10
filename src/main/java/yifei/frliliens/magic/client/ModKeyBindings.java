@@ -3,12 +3,15 @@ package yifei.frliliens.magic.client;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import net.minecraft.client.KeyMapping;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 import yifei.frliliens.magic.FriliensMagic;
+import yifei.frliliens.magic.item.StaffItem;
 import yifei.frliliens.magic.network.CastBasicAbilityPayload;
 
 /**
@@ -56,12 +59,26 @@ public final class ModKeyBindings {
         }
     }
 
-    /** 打开法术选择轮盘。 */
+    /** 打开法术选择轮盘。手持哪把法杖就显示哪把的轮盘。 */
     private static void openSpellWheel() {
         var mc = net.minecraft.client.Minecraft.getInstance();
         if (mc.player == null || mc.screen != null) {
             return;
         }
-        mc.setScreen(new SpellWheelScreen());
+
+        // 识别手持法杖：优先主手，其次副手
+        String staffId = StaffItem.staffIdOf(mc.player.getMainHandItem());
+        if (staffId == null) {
+            staffId = StaffItem.staffIdOf(mc.player.getOffhandItem());
+        }
+        if (staffId == null) {
+            mc.player.displayClientMessage(
+                    Component.translatable("message.friliensmagic.staff_required")
+                            .withStyle(ChatFormatting.YELLOW),
+                    true);
+            return;
+        }
+
+        mc.setScreen(new SpellWheelScreen(staffId));
     }
 }

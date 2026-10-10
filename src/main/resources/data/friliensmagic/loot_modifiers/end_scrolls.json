@@ -1,0 +1,13 @@
+{
+  "type": "friliensmagic:dimension",
+  "conditions": [],
+  "dimension": "minecraft:the_end",
+  "min_count": 1,
+  "max_count": 1,
+  "chance": 0.35,
+  "items": [
+    { "id": "friliensmagic:scroll_blast", "count": 1 },
+    { "id": "friliensmagic:scroll_black_light", "count": 1 },
+    { "id": "friliensmagic:scroll_clean", "count": 1 }
+  ]
+}

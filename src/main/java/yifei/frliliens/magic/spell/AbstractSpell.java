@@ -17,11 +17,17 @@ public abstract class AbstractSpell implements Spell {
     private final String id;
     private final String translationKey;
     private final int manaCost;
+    private final int cooldown;
 
     protected AbstractSpell(String id, int manaCost) {
+        this(id, manaCost, 20);
+    }
+
+    protected AbstractSpell(String id, int manaCost, int cooldown) {
         this.id = id;
         this.translationKey = "spell." + FriliensMagic.MODID + "." + id;
         this.manaCost = manaCost;
+        this.cooldown = cooldown;
     }
 
     @Override
@@ -42,6 +48,11 @@ public abstract class AbstractSpell implements Spell {
     @Override
     public int getManaCost() {
         return manaCost;
+    }
+
+    @Override
+    public int getCooldown() {
+        return cooldown;
     }
 
     @Override

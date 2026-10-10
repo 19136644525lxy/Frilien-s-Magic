@@ -26,6 +26,11 @@ public interface Spell {
     /** 释放该法术所需魔力。基础能力返回 0。 */
     int getManaCost();
 
+    /** 法杖释放后的冷却时间（tick）。默认 20 tick（1 秒）。 */
+    default int getCooldown() {
+        return 20;
+    }
+
     /**
      * 释放法术。
      *

@@ -24,6 +24,8 @@
   "item.friliensmagic.scroll_seal": "Spell Scroll: Seal",
   "item.friliensmagic.scroll_blast": "Spell Scroll: Blast",
   "item.friliensmagic.scroll_ice": "Spell Scroll: Ice",
+  "item.friliensmagic.scroll_float": "Spell Scroll: Float",
+  "item.friliensmagic.scroll_clean": "Spell Scroll: Clean",
   "item.friliensmagic.shaved_ice": "Shaved Ice",
 
   "tooltip.friliensmagic.spell_name": "Spell: %s",
@@ -38,9 +40,14 @@
   "message.friliensmagic.mana_sense_result": "Mana Sense: detected %s entities",
   "message.friliensmagic.no_spell_selected": "No spell selected, press the spell wheel key to choose",
   "message.friliensmagic.no_spell_learned": "No combat spells learned yet",
+  "message.friliensmagic.spell_wrong_staff": "This staff cannot cast %s",
+  "message.friliensmagic.staff_required": "Hold a staff to open the spell wheel",
+  "message.friliensmagic.no_spell_for_staff": "This staff has no spells available yet",
 
   "death.attack.magic": "%1$s was slain by magic",
   "death.attack.magic.player": "%1$s was slain by %2$s's magic",
+
+  "effect.friliensmagic.mana_conceal": "Mana Concealment",
 
   "friliensmagic.configuration.title": "Frilien's Magic Configs",
   "friliensmagic.configuration.section.friliensmagic.common.toml": "Frilien's Magic Configs",
@@ -54,8 +61,11 @@
   "friliensmagic.configuration.manaBarVisible": "Mana bar visible",
   "friliensmagic.configuration.manaBarScale": "Mana bar scale",
   "friliensmagic.configuration.manaBarShowText": "Show mana value text",
+  "friliensmagic.configuration.questVillagerChance": "Quest villager spawn chance",
+  "friliensmagic.configuration.questVillagerCooldown": "Quest villager cooldown (ticks)",
+  "friliensmagic.configuration.questCollectCheckInterval": "Collect quest check interval (ticks)",
 
-  "key.categories.friliensmagic": "Frilien's Magic",
+  "key.category.friliensmagic": "Frilien's Magic",
   "key.friliensmagic.mana_edit": "Mana Bar Edit Mode",
   "key.friliensmagic.mana_toggle": "Mana Bar Toggle",
   "key.friliensmagic.mana_sense": "Basic: Mana Sense",
@@ -82,7 +92,35 @@
   "spell.friliensmagic.seal": "Seal",
   "spell.friliensmagic.blast": "Blast",
   "spell.friliensmagic.shaved_ice": "Shaved Ice",
+  "spell.friliensmagic.float": "Float",
+  "spell.friliensmagic.clean": "Clean",
   "spell.friliensmagic.mana_sense": "Mana Sense",
   "spell.friliensmagic.mana_hide": "Mana Hide",
-  "spell.friliensmagic.long_range": "Long Range"
+  "spell.friliensmagic.long_range": "Long Range",
+
+  "entity.friliensmagic.quest_villager": "§dWandering Mage",
+
+  "quest.friliensmagic.npc.greeting": "§e[Wandering Mage] §fGreetings, traveler. I have a quest for you.",
+  "quest.friliensmagic.npc.cooldown": "§e[Wandering Mage] §fI have no new quests for now, come back later.",
+  "quest.friliensmagic.type.kill": "Defeat %s x%d",
+  "quest.friliensmagic.type.collect": "Collect %s x%d",
+  "quest.friliensmagic.info.complete": "§aQuest complete! You can claim your reward.",
+  "quest.friliensmagic.info.progress": "Progress: %d/%d",
+  "quest.friliensmagic.info.no_quest": "No active quest.",
+  "quest.friliensmagic.info.no_pending": "No pending quest to accept.",
+  "quest.friliensmagic.accepted": "§aQuest accepted.",
+  "quest.friliensmagic.declined": "§7Quest declined.",
+  "quest.friliensmagic.abandoned": "§cQuest abandoned.",
+  "quest.friliensmagic.reward_received": "§bReward received: %s x%d",
+  "quest.friliensmagic.items_insufficient": "§cInsufficient items to complete the quest.",
+  "quest.friliensmagic.villager_not_found": "§cVillager not found.",
+  "quest.friliensmagic.villager_on_cooldown": "§cThis villager cannot offer a quest right now.",
+  "quest.friliensmagic.button.accept": "§e[Accept]",
+  "quest.friliensmagic.button.decline": "§7[Decline]",
+  "quest.friliensmagic.button.claim": "§b[Claim Reward]",
+  "quest.friliensmagic.button.abandon": "§c[Abandon]",
+  "quest.friliensmagic.button.accept.hover": "Accept this quest",
+  "quest.friliensmagic.button.decline.hover": "Decline this quest",
+  "quest.friliensmagic.button.claim.hover": "Claim quest reward",
+  "quest.friliensmagic.button.abandon.hover": "Abandon current quest"
 }

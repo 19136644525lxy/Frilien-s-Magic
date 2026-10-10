@@ -20,9 +20,13 @@ import net.minecraft.network.codec.StreamCodec;
  */
 public record LearnedSpellsData(Set<String> spellIds) {
 
-    /** 初始已学法术：三个基础能力默认学会，无需卷轴。 */
+    /**
+     * 初始已学法术：三个基础能力 + 三个基础战斗法术默认学会，无需卷轴。
+     * 攻击/防御/飞行作为魔法使的入门法术，开局即可使用。
+     */
     private static final Set<String> DEFAULT_SPELLS = Set.of(
-            "mana_sense", "mana_hide", "long_range");
+            "mana_sense", "mana_hide", "long_range",
+            "zoltraak", "defense", "flight");
 
     public static final LearnedSpellsData EMPTY = new LearnedSpellsData(DEFAULT_SPELLS);
 

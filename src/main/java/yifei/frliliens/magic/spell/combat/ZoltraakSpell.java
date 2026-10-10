@@ -38,7 +38,7 @@ public class ZoltraakSpell extends AbstractSpell {
 
     @Override
     protected boolean doCast(Level level, Player caster) {
-        // 计算射程：学习长距离魔法后射程 = 视距 * 16，否则基础射程
+        // 计算射程：学习长距离魔法后射程 = 视距 * 倍率，倍率随魔力上限增强
         double range = BASE_RANGE;
         boolean hasLongRange = caster.getData(ModAttachments.LEARNED_SPELLS)
                 .hasLearned("long_range");
@@ -46,7 +46,10 @@ public class ZoltraakSpell extends AbstractSpell {
             int renderDistance = level.getServer() != null
                     ? level.getServer().getPlayerList().getViewDistance()
                     : 10;
-            range = renderDistance * 16.0;
+            int maxMana = caster.getData(ModAttachments.MANA).max();
+            // 基础 16 倍，每 500 魔力上限 +1 倍
+            double multiplier = 16.0 + maxMana / 500.0;
+            range = renderDistance * multiplier;
         }
 
         Vec3 eyePos = caster.getEyePosition();

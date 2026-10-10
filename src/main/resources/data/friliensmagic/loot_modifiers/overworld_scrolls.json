@@ -1,0 +1,13 @@
+{
+  "type": "friliensmagic:dimension",
+  "conditions": [],
+  "dimension": "minecraft:overworld",
+  "min_count": 1,
+  "max_count": 1,
+  "chance": 0.35,
+  "items": [
+    { "id": "friliensmagic:scroll_shaved_ice", "count": 1 },
+    { "id": "friliensmagic:scroll_float", "count": 1 },
+    { "id": "friliensmagic:scroll_seal", "count": 1 }
+  ]
+}

@@ -24,6 +24,8 @@
   "item.friliensmagic.scroll_seal": "法术卷轴·封印",
   "item.friliensmagic.scroll_blast": "法术卷轴·爆破",
   "item.friliensmagic.scroll_ice": "法术卷轴·刨冰",
+  "item.friliensmagic.scroll_float": "法术卷轴·漂浮",
+  "item.friliensmagic.scroll_clean": "法术卷轴·清洁",
   "item.friliensmagic.shaved_ice": "刨冰",
 
   "tooltip.friliensmagic.spell_name": "法术：%s",
@@ -38,9 +40,14 @@
   "message.friliensmagic.mana_sense_result": "魔力探知：感知到 %s 个实体",
   "message.friliensmagic.no_spell_selected": "未选中法术，请按法术轮盘按键选择",
   "message.friliensmagic.no_spell_learned": "尚未学会任何战斗法术",
+  "message.friliensmagic.spell_wrong_staff": "这把法杖无法施放「%s」",
+  "message.friliensmagic.staff_required": "需要手持法杖才能打开法术轮盘",
+  "message.friliensmagic.no_spell_for_staff": "这把法杖还没有可用的法术",
 
   "death.attack.magic": "%1$s 被魔法消灭了",
   "death.attack.magic.player": "%1$s 被 %2$s 的魔法消灭了",
+
+  "effect.friliensmagic.mana_conceal": "魔力隐匿",
 
   "friliensmagic.configuration.title": "芙莉莲的魔法 配置",
   "friliensmagic.configuration.section.friliensmagic.common.toml": "芙莉莲的魔法 配置",
@@ -54,8 +61,11 @@
   "friliensmagic.configuration.manaBarVisible": "魔力条是否显示",
   "friliensmagic.configuration.manaBarScale": "魔力条缩放比例",
   "friliensmagic.configuration.manaBarShowText": "是否显示魔力值文字",
+  "friliensmagic.configuration.questVillagerChance": "委托村民刷新概率",
+  "friliensmagic.configuration.questVillagerCooldown": "委托村民冷却时间（tick）",
+  "friliensmagic.configuration.questCollectCheckInterval": "委托收集检查间隔（tick）",
 
-  "key.categories.friliensmagic": "芙莉莲的魔法",
+  "key.category.friliensmagic": "芙莉莲的魔法",
   "key.friliensmagic.mana_edit": "魔力条拖动编辑",
   "key.friliensmagic.mana_toggle": "魔力条显隐开关",
   "key.friliensmagic.mana_sense": "基础能力·魔力探知",
@@ -82,7 +92,35 @@
   "spell.friliensmagic.seal": "封印魔法",
   "spell.friliensmagic.blast": "爆破魔法",
   "spell.friliensmagic.shaved_ice": "变出刨冰",
+  "spell.friliensmagic.float": "漂浮魔法",
+  "spell.friliensmagic.clean": "清洁魔法",
   "spell.friliensmagic.mana_sense": "魔力探知",
   "spell.friliensmagic.mana_hide": "魔力隐藏",
-  "spell.friliensmagic.long_range": "长距离魔法"
+  "spell.friliensmagic.long_range": "长距离魔法",
+
+  "entity.friliensmagic.quest_villager": "§d流浪的魔法使",
+
+  "quest.friliensmagic.npc.greeting": "§e[流浪的魔法使] §f你好，旅行者。我有一个委托要交给你。",
+  "quest.friliensmagic.npc.cooldown": "§e[流浪的魔法使] §f我暂时没有新的委托了，晚些再来吧。",
+  "quest.friliensmagic.type.kill": "击杀 %s ×%d",
+  "quest.friliensmagic.type.collect": "收集 %s ×%d",
+  "quest.friliensmagic.info.complete": "§a委托已完成，可以领取奖励！",
+  "quest.friliensmagic.info.progress": "当前进度：%d/%d",
+  "quest.friliensmagic.info.no_quest": "当前没有委托。",
+  "quest.friliensmagic.info.no_pending": "没有待接受的委托。",
+  "quest.friliensmagic.accepted": "§a已接受委托。",
+  "quest.friliensmagic.declined": "§7已拒绝委托。",
+  "quest.friliensmagic.abandoned": "§c已放弃委托。",
+  "quest.friliensmagic.reward_received": "§b获得奖励：%s ×%d",
+  "quest.friliensmagic.items_insufficient": "§c物品不足，无法完成委托。",
+  "quest.friliensmagic.villager_not_found": "§c找不到该村民。",
+  "quest.friliensmagic.villager_on_cooldown": "§c该村民暂时无法提供委托。",
+  "quest.friliensmagic.button.accept": "§e[接受]",
+  "quest.friliensmagic.button.decline": "§7[拒绝]",
+  "quest.friliensmagic.button.claim": "§b[领取奖励]",
+  "quest.friliensmagic.button.abandon": "§c[放弃委托]",
+  "quest.friliensmagic.button.accept.hover": "接受此委托",
+  "quest.friliensmagic.button.decline.hover": "拒绝此委托",
+  "quest.friliensmagic.button.claim.hover": "领取委托奖励",
+  "quest.friliensmagic.button.abandon.hover": "放弃当前委托"
 }

@@ -1,5 +1,6 @@
 package yifei.frliliens.magic.item;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -15,17 +16,35 @@ import yifei.frliliens.magic.attachment.ModAttachments;
 import yifei.frliliens.magic.attachment.SelectedSpellData;
 import yifei.frliliens.magic.spell.Spell;
 import yifei.frliliens.magic.spell.SpellRegistry;
+import yifei.frliliens.magic.spell.StaffSpells;
 
 /**
  * 法杖物品。
  *
- * <p>右键释放玩家当前选中的战斗法术（通过法术轮盘选择），消耗对应魔力。
- * 未选中法术时提示玩家使用轮盘选择。
+ * <p>右键释放<b>本把法杖</b>当前选中的战斗法术（通过法术轮盘选择），消耗对应魔力。
+ * 每把法杖各自记录选中法术，且只能施放 {@link StaffSpells} 中归属于它的法术。
  */
 public class StaffItem extends Item {
 
     public StaffItem(Properties properties) {
         super(properties);
+    }
+
+    /**
+     * 取物品栈对应法杖的注册名（如 {@code frieren_staff}）。
+     *
+     * <p>这是全模组识别「手持的是哪把法杖」的唯一入口，客户端选法术、
+     * 服务端做校验都走这里。
+     *
+     * @param stack 物品栈
+     * @return 注册名；不是法杖时返回 {@code null}
+     */
+    public static String staffIdOf(ItemStack stack) {
+        if (!(stack.getItem() instanceof StaffItem)) {
+            return null;
+        }
+        var key = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return key == null ? null : key.getPath();
     }
 
     @Override
@@ -37,22 +56,40 @@ public class StaffItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
 
+        String staffId = staffIdOf(stack);
+        if (staffId == null) {
+            return InteractionResultHolder.fail(stack);
+        }
+
         if (level.isClientSide) {
             return InteractionResultHolder.consume(stack);
         }
 
-        // 读取当前选中的法术
+        // 读取「本把法杖」选中的法术
         SelectedSpellData selected = player.getData(ModAttachments.SELECTED_SPELL);
-        if (selected.isEmpty()) {
+        String spellId = selected.spellFor(staffId);
+        if (spellId.isEmpty()) {
             player.displayClientMessage(
-                    Component.translatable("message.friliensmagic.no_spell_selected"), true);
+                    Component.translatable("message.friliensmagic.no_spell_selected")
+                            .withStyle(net.minecraft.ChatFormatting.YELLOW),
+                    true);
             return InteractionResultHolder.fail(stack);
         }
 
-        Spell spell = SpellRegistry.get(selected.spellId());
+        Spell spell = SpellRegistry.get(spellId);
         if (spell == null) {
-            player.setData(ModAttachments.SELECTED_SPELL, SelectedSpellData.EMPTY);
-            player.syncData(ModAttachments.SELECTED_SPELL);
+            // 法术已不存在（例如被移除），清掉这条选择
+            player.setData(ModAttachments.SELECTED_SPELL, selected.select(staffId, ""));
+            return InteractionResultHolder.fail(stack);
+        }
+
+        // 归属校验：客户端轮盘已按法杖过滤，这里是服务端兜底
+        if (!StaffSpells.allows(staffId, spellId)) {
+            player.displayClientMessage(
+                    Component.translatable("message.friliensmagic.spell_wrong_staff",
+                            spell.getDisplayNameComponent())
+                            .withStyle(net.minecraft.ChatFormatting.RED),
+                    true);
             return InteractionResultHolder.fail(stack);
         }
 
@@ -62,7 +99,9 @@ public class StaffItem extends Item {
         if (mana.current() < cost) {
             player.displayClientMessage(
                     Component.translatable("message.friliensmagic.mana_not_enough",
-                            spell.getDisplayNameComponent(), cost), true);
+                            spell.getDisplayNameComponent(), cost)
+                            .withStyle(net.minecraft.ChatFormatting.RED),
+                    true);
             return InteractionResultHolder.fail(stack);
         }
 
@@ -70,8 +109,7 @@ public class StaffItem extends Item {
         boolean success = spell.cast(level, player);
         if (success) {
             player.setData(ModAttachments.MANA, mana.consume(cost));
-            player.syncData(ModAttachments.MANA);
-            player.getCooldowns().addCooldown(this, 20);
+            player.getCooldowns().addCooldown(this, spell.getCooldown());
             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.PLAYERS, 0.6F, 1.6F);
         }

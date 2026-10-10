@@ -43,6 +43,8 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.SCROLL_SEAL.get());
                         output.accept(ModItems.SCROLL_BLAST.get());
                         output.accept(ModItems.SCROLL_ICE.get());
+                        output.accept(ModItems.SCROLL_FLOAT.get());
+                        output.accept(ModItems.SCROLL_CLEAN.get());
                     })
                     .build());
 

@@ -11,15 +11,22 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+import yifei.frliliens.magic.attachment.ManaData;
+import yifei.frliliens.magic.attachment.ModAttachments;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
 /**
  * 基础能力：魔力探知。
  *
- * <p>感知周围 16 格内的实体，给予发光效果以便追踪。
- * 不消耗魔力，但有冷却。
+ * <p>感知周围 32 格内的实体，给予发光效果以便追踪。
+ * 持续时间随魔力上限提升。不消耗魔力，但有冷却。
  */
 public class ManaSenseSpell extends AbstractSpell {
+
+    /** 感知半径。 */
+    private static final double RADIUS = 32.0;
+    /** 基础持续时间（tick）。 */
+    private static final int BASE_DURATION = 200;
 
     public ManaSenseSpell() {
         super("mana_sense", 0);
@@ -27,13 +34,17 @@ public class ManaSenseSpell extends AbstractSpell {
 
     @Override
     protected boolean doCast(Level level, Player caster) {
-        AABB area = caster.getBoundingBox().inflate(16.0);
+        // 持续时间随魔力上限增强：200 + maxMana/10 tick
+        ManaData mana = caster.getData(ModAttachments.MANA);
+        int duration = BASE_DURATION + mana.max() / 10;
+
+        AABB area = caster.getBoundingBox().inflate(RADIUS);
         int count = 0;
 
         for (Entity entity : level.getEntities(caster, area)) {
             if (entity instanceof LivingEntity living) {
                 living.addEffect(new MobEffectInstance(MobEffects.GLOWING,
-                        200, 0, false, false, true));
+                        duration, 0, false, false, true));
                 count++;
             }
         }

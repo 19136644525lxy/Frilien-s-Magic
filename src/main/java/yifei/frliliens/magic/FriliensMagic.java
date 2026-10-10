@@ -18,10 +18,16 @@ import net.minecraft.world.item.CreativeModeTabs;
 
 import yifei.frliliens.magic.attachment.ModAttachments;
 import yifei.frliliens.magic.config.Config;
+import yifei.frliliens.magic.effect.ModEffects;
 import yifei.frliliens.magic.handler.FlightHandler;
+import yifei.frliliens.magic.handler.ManaConcealHandler;
 import yifei.frliliens.magic.handler.ManaRegenHandler;
+import yifei.frliliens.magic.handler.QuestProgressHandler;
+import yifei.frliliens.magic.handler.QuestVillagerHandler;
+import yifei.frliliens.magic.quest.QuestCommand;
 import yifei.frliliens.magic.item.ModCreativeTabs;
 import yifei.frliliens.magic.item.ModItems;
+import yifei.frliliens.magic.loot.ModLootModifiers;
 import yifei.frliliens.magic.network.CastBasicAbilityPayload;
 import yifei.frliliens.magic.network.SelectSpellPayload;
 
@@ -44,12 +50,18 @@ public class FriliensMagic {
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
         ModAttachments.ATTACHMENT_TYPES.register(modEventBus);
+        ModLootModifiers.GLM.register(modEventBus);
+        ModEffects.EFFECTS.register(modEventBus);
 
         modEventBus.addListener(this::addCreative);
 
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(new ManaRegenHandler());
         NeoForge.EVENT_BUS.register(new FlightHandler());
+        NeoForge.EVENT_BUS.register(new ManaConcealHandler());
+        NeoForge.EVENT_BUS.register(new QuestVillagerHandler());
+        NeoForge.EVENT_BUS.register(new QuestProgressHandler());
+        NeoForge.EVENT_BUS.register(new QuestCommand());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

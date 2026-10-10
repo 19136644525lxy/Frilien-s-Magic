@@ -11,9 +11,11 @@ import yifei.frliliens.magic.spell.basic.ManaHideSpell;
 import yifei.frliliens.magic.spell.basic.ManaSenseSpell;
 import yifei.frliliens.magic.spell.combat.BlackLightSpell;
 import yifei.frliliens.magic.spell.combat.BlastSpell;
+import yifei.frliliens.magic.spell.combat.CleanSpell;
 import yifei.frliliens.magic.spell.combat.DefenseSpell;
 import yifei.frliliens.magic.spell.combat.FireSpell;
 import yifei.frliliens.magic.spell.combat.FlightSpell;
+import yifei.frliliens.magic.spell.combat.FloatSpell;
 import yifei.frliliens.magic.spell.combat.LightningSpell;
 import yifei.frliliens.magic.spell.combat.ManaStrikeSpell;
 import yifei.frliliens.magic.spell.combat.SealSpell;
@@ -46,6 +48,8 @@ public final class SpellRegistry {
         register(new SealSpell());
         register(new BlastSpell());
         register(new ShavedIceSpell());
+        register(new FloatSpell());
+        register(new CleanSpell());
     }
 
     private SpellRegistry() {

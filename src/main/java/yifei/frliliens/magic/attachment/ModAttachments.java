@@ -6,6 +6,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import yifei.frliliens.magic.FriliensMagic;
+import yifei.frliliens.magic.quest.QuestData;
+import yifei.frliliens.magic.quest.QuestVillagerData;
 
 /**
  * NeoForge 数据附件注册。
@@ -60,6 +62,20 @@ public final class ModAttachments {
             ATTACHMENT_TYPES.register("flight", () -> AttachmentType.builder(() -> FlightData.INACTIVE)
                     .serialize(FlightData.CODEC)
                     .sync(FlightData.STREAM_CODEC)
+                    .build());
+
+    /** 玩家委托数据附件（死亡后清除）。 */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<QuestData>> QUEST =
+            ATTACHMENT_TYPES.register("quest", () -> AttachmentType.builder(() -> QuestData.EMPTY)
+                    .serialize(QuestData.CODEC)
+                    .sync(QuestData.STREAM_CODEC)
+                    .build());
+
+    /** 村民委托数据附件（标记委托村民 + 冷却）。 */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<QuestVillagerData>> QUEST_VILLAGER =
+            ATTACHMENT_TYPES.register("quest_villager", () -> AttachmentType.builder(() -> QuestVillagerData.EMPTY)
+                    .serialize(QuestVillagerData.CODEC)
+                    .sync(QuestVillagerData.STREAM_CODEC)
                     .build());
 
     private ModAttachments() {

@@ -40,3 +40,9 @@ texture_converter.py
 芙莉莲魔法汇总.html
 __pycache__/
 *.pyc
+
+# Trae
+.trae/
+
+# HTML exports
+*.html
