@@ -1,0 +1,18 @@
+{
+  "_comment": [
+    "委托池示例：收集目标。",
+    "路径 data/<命名空间>/friliensmagic/quest_pools/collect.json，type 必须是 collect。",
+    "target 这里填物品注册 id。",
+    "本文件演示用数据包引入模组自己的物品作为收集目标。"
+  ],
+  "entries": [
+    {
+      "id": "shaved_ice_custom",
+      "type": "collect",
+      "target": "friliensmagic:shaved_ice",
+      "weight": 4,
+      "min": 2,
+      "max": 6
+    }
+  ]
+}

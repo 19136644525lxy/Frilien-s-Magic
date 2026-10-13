@@ -1,0 +1,24 @@
+{
+  "_comment": [
+    "委托池示例：奖励。",
+    "路径 data/<命名空间>/friliensmagic/quest_pools/rewards.json。",
+    "字段：id 条目键 / item 物品注册 id / min 最少数量 / max 最多数量 / weight 权重",
+    "本文件演示两件事：调高某个内置奖励的权重，以及追加新奖励。"
+  ],
+  "entries": [
+    {
+      "id": "diamond",
+      "item": "minecraft:diamond",
+      "min": 2,
+      "max": 5,
+      "weight": 20
+    },
+    {
+      "id": "netherite_ingot_custom",
+      "item": "minecraft:netherite_ingot",
+      "min": 1,
+      "max": 1,
+      "weight": 1
+    }
+  ]
+}

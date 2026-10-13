@@ -1,0 +1,45 @@
+{
+  "_comment": [
+    "委托池示例：击杀目标。",
+    "路径固定为 data/<命名空间>/friliensmagic/quest_pools/kill.json，文件名必须是 kill.json。",
+    "规则：本文件里的条目按 id 覆盖模组内置的同名条目；内置没有的 id 则追加为新条目。",
+    "所以只写想改的条目即可，不必抄整套。type 必须是 kill（本文件专用）。",
+    "字段：id 条目键（必填）/ type 固定 kill（必填）/ target 实体注册 id（必填）",
+    "      weight 权重默认 1 / min 最少数量（必填）/ max 最多数量（必填）",
+    "本文件演示了 3 种用法：覆盖内置、把内置改为不可能出现、追加新条目。"
+  ],
+  "entries": [
+    {
+      "id": "zombie",
+      "type": "kill",
+      "target": "minecraft:zombie",
+      "weight": 6,
+      "min": 10,
+      "max": 25
+    },
+    {
+      "id": "warden",
+      "type": "kill",
+      "target": "minecraft:warden",
+      "weight": 1,
+      "min": 1000,
+      "max": 1000
+    },
+    {
+      "id": "blaze_custom",
+      "type": "kill",
+      "target": "minecraft:blaze",
+      "weight": 5,
+      "min": 4,
+      "max": 10
+    },
+    {
+      "id": "hoglin_custom",
+      "type": "kill",
+      "target": "minecraft:hoglin",
+      "weight": 3,
+      "min": 3,
+      "max": 8
+    }
+  ]
+}
