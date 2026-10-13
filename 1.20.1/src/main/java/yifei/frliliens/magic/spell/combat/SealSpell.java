@@ -1,0 +1,62 @@
+package yifei.frliliens.magic.spell.combat;
+
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+
+import yifei.frliliens.magic.config.Config;
+import yifei.frliliens.magic.spell.AbstractSpell;
+
+/**
+ * 封印魔法。
+ *
+ * <p>将周围敌人封印使其无法行动（缓慢 + 失明 + 挖掘疲劳）。
+ * 半径、持续时间与三种效果的等级都在 {@code Config} 里可调。
+ */
+public class SealSpell extends AbstractSpell {
+
+    public SealSpell() {
+        super("seal", 90);
+    }
+
+    @Override
+    protected boolean doCast(Level level, Player caster) {
+        double radius = Config.SEAL_RADIUS.get();
+        int duration = Config.SEAL_DURATION.get();
+        int slowLevel = Config.SEAL_SLOWNESS_LEVEL.get();
+        int blindLevel = Config.SEAL_BLINDNESS_LEVEL.get();
+        int fatigueLevel = Config.SEAL_FATIGUE_LEVEL.get();
+
+        AABB area = caster.getBoundingBox().inflate(radius);
+        int count = 0;
+
+        for (Entity entity : level.getEntities(caster, area)) {
+            if (entity instanceof LivingEntity living && entity != caster) {
+                living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+                        duration, slowLevel, false, true, true));
+                living.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
+                        duration, blindLevel, false, true, true));
+                living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN,
+                        duration, fatigueLevel, false, true, true));
+                count++;
+            }
+        }
+
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(
+                    net.minecraft.core.particles.ParticleTypes.ENCHANT,
+                    caster.getX(), caster.getY() + 1, caster.getZ(),
+                    30, 3.0, 2.0, 3.0, 0.05);
+            serverLevel.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
+                    SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.8F, 0.5F);
+        }
+        return true;
+    }
+}

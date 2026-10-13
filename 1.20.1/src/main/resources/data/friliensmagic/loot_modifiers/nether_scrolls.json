@@ -1,0 +1,22 @@
+{
+  "type": "friliensmagic:dimension",
+  "conditions": [],
+  "dimension": "minecraft:the_nether",
+  "min_count": 1,
+  "max_count": 1,
+  "chance": 0.35,
+  "items": [
+    {
+      "id": "friliensmagic:scroll_mana_strike",
+      "Count": 1
+    },
+    {
+      "id": "friliensmagic:scroll_vollzanbel",
+      "Count": 1
+    },
+    {
+      "id": "friliensmagic:scroll_judradjim",
+      "Count": 1
+    }
+  ]
+}
