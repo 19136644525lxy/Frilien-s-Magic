@@ -56,6 +56,11 @@ authors="${mod_authors}" #optional
 # 再以 UTF-8 写出，结果就是二次编码乱码（问号 / 锟斤拷）。
 # TOML 文件本身由 Forge 以 UTF-8 读取，所以写在这里最稳。
 description='''基于《葬送的芙莉莲》的魔法模组：法杖施法、法术卷轴、魔力值、护盾、委托系统。'''
+
+# Mixin 配置（欢迎标题自适应缩放）
+[[mixins]]
+config="friliensmagic.mixins.json"
+
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.${mod_id}]] #optional
     # the modid of the dependency

@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "yifei.frliliens.magic.mixin",
+  "refmap": "friliensmagic.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "GuiMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -2,7 +2,9 @@
 
 > 基于《葬送的芙莉莲》世界观的 Minecraft 魔法模组
 
-**Minecraft 1.21.1 | NeoForge 21.1.250 | MIT License**
+**Minecraft 1.21.1 | NeoForge 21.1.250**（主版本，仓库根目录）
+**Minecraft 1.20.1 | Forge 47.4.27**（移植版，`1.20.1/` 目录，功能保持一致）
+**MIT License**
 
 ## 简介
 
@@ -281,6 +283,19 @@ data/<命名空间>/friliensmagic/quest_pools/rewards.json    奖励
 | `welcomeTitleStay` | 70 | 停留时长（tick，20 = 1 秒） |
 | `welcomeTitleFadeOut` | 20 | 淡出时长（tick） |
 
+#### 标题自适应缩放
+
+原版标题固定 4 倍（主标题）/ 2 倍（副标题）渲染，长文本在低分辨率或较大的
+GUI 缩放下会超出屏幕。模组通过 Mixin 在每帧渲染前按「文本宽度 / 屏幕可用宽度」
+重算缩放：大屏保持原版观感，小屏自动缩小到两侧留 10% 边距，分辨率或
+界面尺寸（GUI 缩放）变化时即时生效。两个版本实现一致：
+
+- 1.21.1 NeoForge：注入 `Gui.renderTitle`（Mixin 配置内置于 NeoForge，无需 refmap）
+- 1.20.1 Forge：标题渲染内联在 `Gui.render`，改为拦截 `setTitle`/`setSubtitle`/`clear`
+  缓存文本，避免 `@Shadow` 字段依赖 refmap 字段映射；注解处理器配置见
+  `1.20.1/build.gradle`（手动传入 MixinGradle 原本注入的 `mappingTypes`/
+  `reobfTsrgFile`/`outRefMapFile` 三个参数）
+
 ### 命令
 
 > 需要权限等级 2（管理员）。`[玩家]` 可省略，省略即操作全局设置；
@@ -352,10 +367,15 @@ data/<命名空间>/friliensmagic/quest_pools/rewards.json    奖励
 ## 构建
 
 ```bash
+# 1.21.1 NeoForge 版（仓库根目录）
+./gradlew build
+
+# 1.20.1 Forge 版
+cd 1.20.1
 ./gradlew build
 ```
 
-产出文件位于 `build/libs/`。
+产出文件位于各自目录的 `build/libs/`。
 
 ## 许可协议
 

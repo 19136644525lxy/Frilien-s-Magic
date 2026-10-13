@@ -75,6 +75,13 @@ minecraft {
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
 
+            // 标题自适应缩放验证：窗口拉宽 + GUI 缩放拉满(4)，原版 4 倍标题必然超宽（实测用，验证后可删）
+            property 'user.language', 'zh_cn'
+            property 'guiScale', '4'
+            property 'fullscreen', 'false'
+            property 'overrideWidth', '2560'
+            property 'overrideHeight', '1080'
+
             mods {
                 "${mod_id}" {
                     source sourceSets.main
@@ -130,6 +137,12 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // Mixin AP：编译时生成 refmap（生产环境 SRG 命名，refmap 负责把 render 等方法名映射过去）
+    // 注意：FG3 混淆服务解析 tsrg 依赖 Guava，必须一并加入 processor 路径，
+    // 否则该服务因 NoClassDefFoundError 被 ServiceLoader 静默跳过，映射全部找不到
+    annotationProcessor('org.spongepowered:mixin:0.8.5:processor')
+    annotationProcessor('com.google.guava:guava:31.1-jre')
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -205,6 +218,20 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+// 激活 Mixin AP 的 FG3 混淆服务（替代已停更的 MixinGradle，手动传入它原本注入的三个参数）：
+// - mappingTypes=tsrg 是启用开关（FG3 字节码中硬编码检查该选项）
+// - reobfTsrgFile 传入 createMcpToSrg 产出的 tsrg，AP 才能把 official 名（render）解析成 SRG 名
+// - outRefMapFile 指定 refmap 输出位置，写进 classes 目录随 jar 打包（与 mixins.json 的 refmap 属性对应）
+// 注意必须在配置阶段就写入 compilerArgs，doFirst 里追加会被 Gradle 快照丢弃
+tasks.named('compileJava', JavaCompile).configure {
+    dependsOn('createMcpToSrg')
+    options.compilerArgs += [
+            "-AmappingTypes=tsrg",
+            "-AreobfTsrgFile=${project.layout.buildDirectory.file('createMcpToSrg/output.tsrg').get().asFile.absolutePath}",
+            "-AoutRefMapFile=${project.layout.buildDirectory.file('classes/java/main/friliensmagic.refmap.json').get().asFile.absolutePath}",
+    ]
 }
 
 // 源码 jar：与 1.21 版本保持一致，发布时附带可读源码
