@@ -210,6 +210,129 @@ data/<命名空间>/friliensmagic/quest_pools/rewards.json    奖励
 5. **魔力条**：在按键设置中绑定「魔力条编辑」和「魔力条开关」
 6. **接受委托**：在村庄中寻找发光的「流浪的魔法使」（或创造模式用刷怪蛋生成），右键对话
 
+## 进入存档时的提示
+
+玩家进入存档会收到**两段互相独立**的提示：
+
+| | 社群信息 | 欢迎语 |
+|---|---|---|
+| **时机** | **每次**进入 | 仅**首次**进入（按存档判定） |
+| **位置** | 聊天栏 | 屏幕中央**标题** |
+| **默认内容** | 模组仓库 + Discord 邀请 | 欢迎来到辛逝纪1314年，尊敬的魔法使 |
+| **用途** | 服务器公告 | 入场致意 |
+
+「首次」的记录存在主世界的 `data/friliensmagic_welcome.dat` 里，随存档走——
+同一玩家换个存档会重新看到一次欢迎语。
+
+### 社群信息（每次进入）
+
+默认显示三行，其中两个网址是**可点击链接**（点击打开浏览器）：
+
+```
+欢迎加入魔法的世界，魔法使。
+本模组仓库：https://github.com/19136644525lxy/Frilien-s-Magic.git
+欢迎加入我们的服务器：https://discord.gg/JGpKs6GDFC
+```
+
+网址本身作为链接文字显示，这样任何语言的玩家都能看懂，不需要翻译网址。
+
+服主一般会改成自己服务器的信息：
+
+```
+/friliensmagic welcome join set 欢迎来到 XXX 服务器！\nQQ 群：123456
+```
+
+**文本里只要出现上面那两个网址，会自动变成可点击链接**，不用特殊语法。
+
+### 欢迎语（仅首次，标题形式）
+
+屏幕中央以**标题**形式显示。聊天栏的消息容易被冲掉，标题更适合入场致意。
+
+**多行文本**：第一行是主标题，其余合并成副标题（小一号字，位于主标题下方）。
+
+#### 跟随玩家语言
+
+默认文案走**翻译键** `friliensmagic.welcome.default`，由**客户端**按自己的语言渲染：
+
+| 客户端语言 | 显示 |
+|------|------|
+| 简体中文 | 欢迎来到辛逝纪1314年，尊敬的魔法使 |
+| English | Welcome to the 1314th year of the Sorrowful Era, honored mage. |
+
+这一点是必须的：**服务端拿不到客户端的语言设置**，只能把翻译键发过去让客户端解析。
+所以英文客户端不会看到中文。
+
+#### 文案优先级
+
+```
+单玩家自定义  >  全局自定义  >  全局默认（翻译键，跟随玩家语言）
+```
+
+- **全局自定义 / 单玩家自定义** 是管理员写死的字面文本，原样发送，不做翻译
+- 只有**走默认**时才交给客户端翻译
+
+#### 显示时长
+
+标题的淡入 / 停留 / 淡出可在配置里调（默认 10 / 70 / 20 tick）：
+
+| 配置键 | 默认 | 说明 |
+|--------|------|------|
+| `welcomeTitleFadeIn` | 10 | 淡入时长（tick） |
+| `welcomeTitleStay` | 70 | 停留时长（tick，20 = 1 秒） |
+| `welcomeTitleFadeOut` | 20 | 淡出时长（tick） |
+
+### 命令
+
+> 需要权限等级 2（管理员）。`[玩家]` 可省略，省略即操作全局设置；
+> 只接受**在线**玩家。
+
+**欢迎语**（标题，仅首次）：
+
+| 命令 | 作用 |
+|------|------|
+| `/friliensmagic welcome get [玩家]` | 查看（原样回显，便于确认中文） |
+| `/friliensmagic welcome set <文本>` | 设置全局自定义文本 |
+| `/friliensmagic welcome set <玩家> <文本>` | 设置某个玩家的专属文本 |
+| `/friliensmagic welcome reset [玩家]` | 恢复默认（走翻译键） |
+| `/friliensmagic welcome clear [玩家]` | 关闭提示 |
+| `/friliensmagic welcome forget [玩家]` | 清空「已提示」记录，下次进入重新看到 |
+
+**社群信息**（聊天栏，每次进入）：
+
+| 命令 | 作用 |
+|------|------|
+| `/friliensmagic welcome join get` | 查看当前社群信息 |
+| `/friliensmagic welcome join set <文本>` | 设置自定义文本（网址自动变链接） |
+| `/friliensmagic welcome join reset` | 恢复默认 |
+| `/friliensmagic welcome join clear` | 关闭 |
+
+**中文与空格**：直接输入即可，无需转义。`set` 的参数用 greedy string 解析，
+所以空格、中文标点都能保留。例：
+
+```
+/friliensmagic welcome set 欢迎来到辛逝纪1314年，尊敬的魔法使
+/friliensmagic welcome set Steve 欢迎你，Steve
+/friliensmagic welcome join set 欢迎加入！\n仓库：https://github.com/19136644525lxy/Frilien-s-Magic.git
+```
+
+**换行**：命令里敲不了真换行，用字面 `\n` 表示，会还原成多行。
+
+### 改默认文案
+
+两个默认文案都是普通翻译键，改模组语言文件里的对应项即可：
+
+| 翻译键 | 内容 |
+|--------|------|
+| `friliensmagic.join.line1` | 社群信息第 1 行 |
+| `friliensmagic.join.line2` | 社群信息第 2 行（`%s` 是仓库链接） |
+| `friliensmagic.join.line3` | 社群信息第 3 行（`%s` 是 Discord 链接） |
+| `friliensmagic.welcome.default` | 欢迎语标题 |
+
+> 社群信息**一个键一行**，不是一整段。原因是原版语言文件里的 `\n` 是**字面**的
+> 反斜杠加 n，翻译时不会被转成换行——写成一整段会挤在同一行显示。
+
+数据包也能覆盖，见「数据包自定义委托」一节对语言文件的说明。
+
 ## 技术特性
 
 - **数据存储**：NeoForge AttachmentType 系统（自动序列化、客户端同步、copy-on-death 可选）

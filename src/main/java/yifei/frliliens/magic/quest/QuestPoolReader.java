@@ -88,7 +88,7 @@ final class QuestPoolReader {
         try {
             return manager.listResources(DIR, rl -> rl.getPath().endsWith("/" + fileName));
         } catch (Exception e) {
-            FriliensMagic.LOGGER.warn("枚举委托池文件失败 {}: {}", fileName, e.toString());
+            FriliensMagic.LOGGER.warn("Failed to enumerate quest pool file {}: {}", fileName, e.toString());
             return Map.of();
         }
     }
@@ -106,12 +106,12 @@ final class QuestPoolReader {
         try (var reader = resource.openAsReader()) {
             JsonElement root = JsonParser.parseReader(reader);
             if (!root.isJsonObject()) {
-                FriliensMagic.LOGGER.warn("委托池文件 {} 顶层不是对象，已跳过", path);
+                FriliensMagic.LOGGER.warn("Quest pool file {} is not a JSON object, skipping", path);
                 return 0;
             }
             JsonObject obj = root.getAsJsonObject();
             if (!obj.has("entries") || !obj.get("entries").isJsonArray()) {
-                FriliensMagic.LOGGER.warn("委托池文件 {} 缺少 entries 数组，已跳过", path);
+                FriliensMagic.LOGGER.warn("Quest pool file {} has no \"entries\" array, skipping", path);
                 return 0;
             }
             JsonArray array = obj.getAsJsonArray("entries");
@@ -119,14 +119,14 @@ final class QuestPoolReader {
                 DataResult<T> result = codec.parse(JsonOps.INSTANCE, array.get(i));
                 var parsed = result.result();
                 if (parsed.isEmpty()) {
-                    FriliensMagic.LOGGER.warn("委托池条目解析失败 {}[{}]: {}", path, i,
-                            result.error().map(DataResult.Error::message).orElse("未知错误"));
+                    FriliensMagic.LOGGER.warn("Failed to parse quest pool entry {}[{}]: {}", path, i,
+                            result.error().map(DataResult.Error::message).orElse("unknown error"));
                     continue;
                 }
                 T value = parsed.get();
                 if (filterType != null && value instanceof Target t && t.type() != filterType) {
                     FriliensMagic.LOGGER.warn(
-                            "委托池条目 {}[{}] 的 type 是 {}，与所在文件（{}）不符，已跳过",
+                            "Quest pool entry {}[{}] has type {} which does not match its file ({}), skipping",
                             path, i, t.type().serialName(), filterType.serialName());
                     continue;
                 }
@@ -136,16 +136,16 @@ final class QuestPoolReader {
                 if (previous != null) {
                     // 覆盖内置是正常用法（记 debug）；同层重复才值得警告
                     if (builtin.contains(previous)) {
-                        FriliensMagic.LOGGER.debug("委托池 {} 条目 \"{}\" 被 {} 覆盖",
+                        FriliensMagic.LOGGER.debug("Quest pool {} entry \"{}\" overridden by {}",
                                 poolName, id, path);
                     } else {
-                        FriliensMagic.LOGGER.warn("委托池 {} 中 id \"{}\" 重复，{} 覆盖了前一条",
-                                poolName, id, path);
+                        FriliensMagic.LOGGER.warn("Duplicate id \"{}\" in quest pool {}, overridden by {}",
+                                id, poolName, path);
                     }
                 }
             }
         } catch (Exception e) {
-            FriliensMagic.LOGGER.warn("读取委托池文件失败 {}: {}", path, e.toString());
+            FriliensMagic.LOGGER.warn("Failed to read quest pool file {}: {}", path, e.toString());
             return 0;
         }
         return added;

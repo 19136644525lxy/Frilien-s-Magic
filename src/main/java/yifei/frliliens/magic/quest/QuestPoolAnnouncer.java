@@ -76,17 +76,18 @@ public final class QuestPoolAnnouncer {
         if (current.isEmpty()) {
             // 数据包把池子清空了？池子会回退内置默认值，这里不必吵
             if (!previous.isEmpty()) {
-                FriliensMagic.LOGGER.info("委托池数据包全部卸载（已回退内置默认值）");
+                FriliensMagic.LOGGER.info("All quest pool datapacks removed (reverted to built-in defaults)");
             }
             return;
         }
 
         Set<String> added = newlyLoaded(current, previous);
         if (added.isEmpty()) {
-            FriliensMagic.LOGGER.debug("委托池重载完成，命名空间无变化: {}", current);
+            FriliensMagic.LOGGER.debug("Quest pools reloaded, no namespace change: {}", current);
             return;
         }
 
+        FriliensMagic.LOGGER.info("Loaded {} quest datapack(s): {}", added.size(), added);
         broadcast(server, added);
     }
 
@@ -110,7 +111,7 @@ public final class QuestPoolAnnouncer {
     private static void broadcast(MinecraftServer server, Set<String> namespaces) {
         Component message = buildMessage(namespaces);
         // 同时记一条日志：无人在线时也能确认通报确实发生了
-        FriliensMagic.LOGGER.info("委托载入通报: {}", message.getString());
+        FriliensMagic.LOGGER.info("Quest load announcement: {}", message.getString());
         for (var player : server.getPlayerList().getPlayers()) {
             player.displayClientMessage(message, false);
         }
@@ -119,7 +120,7 @@ public final class QuestPoolAnnouncer {
     /** 组装通报文本。 */
     private static Component buildMessage(Set<String> namespaces) {
         String joined = String.join("、", namespaces);
-        String fallback = "已载入 " + namespaces.size() + " 个委托数据包：" + joined;
+        String fallback = "Loaded " + namespaces.size() + " quest datapack(s): " + joined;
         return Component.translatable(KEY, namespaces.size(), joined, fallback);
     }
 

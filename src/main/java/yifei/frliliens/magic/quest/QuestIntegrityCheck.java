@@ -53,21 +53,22 @@ public final class QuestIntegrityCheck {
         Set<String> namespaces = QuestPoolAnnouncer.loadedNamespaces();
         for (QuestPoolEntry.Target target : QuestRegistry.allKillTargets()) {
             if (isCustomTarget(target, namespaces)) {
-                checkEntity(target.target(), "击杀目标[" + target.id() + "]", bad);
+                checkEntity(target.target(), "kill target[" + target.id() + "]", bad);
             }
         }
         for (QuestPoolEntry.Target target : QuestRegistry.allCollectTargets()) {
             if (isCustomTarget(target, namespaces)) {
-                checkItem(target.target(), "收集目标[" + target.id() + "]", bad);
+                checkItem(target.target(), "collect target[" + target.id() + "]", bad);
             }
         }
         for (QuestPoolEntry.Reward reward : QuestRegistry.allRewards()) {
             if (isCustomReward(reward, namespaces)) {
-                checkItem(reward.item(), "委托奖励[" + reward.id() + "]", bad);
+                checkItem(reward.item(), "quest reward[" + reward.id() + "]", bad);
             }
         }
         if (!namespaces.isEmpty()) {
-            FriliensMagic.LOGGER.info("自检范围：数据包 {} 的条目 + 全部内置默认值已跳过",
+            FriliensMagic.LOGGER.info(
+                    "Integrity check scope: entries from datapack(s) {}; built-in defaults skipped",
                     namespaces);
         }
 
@@ -80,7 +81,7 @@ public final class QuestIntegrityCheck {
             lootEntries = counts[1];
         } else {
             // 正常路径不会走到这里：调用方是 ServerStartedEvent，服务端必然已就绪
-            bad.add("自检未拿到服务端实例，loot_modifiers 未经校验");
+            bad.add("no server instance available, loot_modifiers not validated");
         }
 
         // ---- 法术数值配置 ----
@@ -88,16 +89,16 @@ public final class QuestIntegrityCheck {
         for (var spell : yifei.frliliens.magic.spell.SpellRegistry.getAll()) {
             spells++;
             if (!yifei.frliliens.magic.spell.SpellTuning.hasSettings(spell.getId())) {
-                bad.add("法术缺少数值配置: " + spell.getId()
-                        + "（请在 SpellTuning.BY_ID 中登记）");
+                bad.add("spell has no tuning entry: " + spell.getId()
+                        + " (register it in SpellTuning.BY_ID)");
             }
         }
 
         // 扫到的条目数也打出来：只报 "passed" 时无法区分「全都对」和「什么都没扫到」
         if (bad.isEmpty()) {
             FriliensMagic.LOGGER.info(
-                    "Integrity check passed ({} 条任务 id, {} 个法术数值,"
-                            + " {} 个战利品文件 / {} 条物品 id)",
+                    "Integrity check passed ({} quest ids, {} spell tunings,"
+                            + " {} loot files / {} item ids)",
                     QuestRegistry.allKillTargets().size()
                             + QuestRegistry.allCollectTargets().size()
                             + QuestRegistry.allRewards().size(),
@@ -173,11 +174,11 @@ public final class QuestIntegrityCheck {
                     JsonObject item = el.getAsJsonObject();
                     if (item.has("id")) {
                         entries++;
-                        checkItem(item.get("id").getAsString(), "战利品 " + file, bad);
+                        checkItem(item.get("id").getAsString(), "loot " + file, bad);
                     }
                 }
             } catch (Exception e) {
-                bad.add("战利品文件解析失败 " + file + ": " + e.getMessage());
+                bad.add("failed to parse loot file " + file + ": " + e.getMessage());
             }
         }
         return new int[] { files, entries };
@@ -186,24 +187,24 @@ public final class QuestIntegrityCheck {
     private static void checkItem(String id, String where, List<String> bad) {
         ResourceLocation rl = ResourceLocation.tryParse(id);
         if (rl == null) {
-            bad.add(where + " id 格式非法: " + id);
+            bad.add(where + " has a malformed id: " + id);
             return;
         }
         // AIR 是未知 id 的返回值，所以要排除掉真正想引用 air 的情况
         if (BuiltInRegistries.ITEM.get(rl) == Items.AIR
                 && !rl.equals(ResourceLocation.withDefaultNamespace("air"))) {
-            bad.add(where + " 物品不存在: " + id);
+            bad.add(where + " references a missing item: " + id);
         }
     }
 
     private static void checkEntity(String id, String where, List<String> bad) {
         ResourceLocation rl = ResourceLocation.tryParse(id);
         if (rl == null) {
-            bad.add(where + " id 格式非法: " + id);
+            bad.add(where + " has a malformed id: " + id);
             return;
         }
         if (!BuiltInRegistries.ENTITY_TYPE.containsKey(rl)) {
-            bad.add(where + " 实体不存在: " + id);
+            bad.add(where + " references a missing entity: " + id);
         }
     }
 

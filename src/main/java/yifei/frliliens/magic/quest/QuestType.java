@@ -45,6 +45,6 @@ public enum QuestType {
             }
         }
         return com.mojang.serialization.DataResult.error(
-                () -> "未知的委托类型 \"" + name + "\"，应为 kill 或 collect");
+                () -> "Unknown quest type \"" + name + "\", expected kill or collect");
     }
 }

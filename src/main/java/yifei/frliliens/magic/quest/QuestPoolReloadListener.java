@@ -76,7 +76,8 @@ public class QuestPoolReloadListener implements PreparableReloadListener {
             fellBack = true;
         }
         if (fellBack) {
-            FriliensMagic.LOGGER.warn("委托池存在空池，已回退内置默认值（检查数据包是否覆盖过头）");
+            FriliensMagic.LOGGER.warn("Quest pool is empty, falling back to built-in defaults"
+                + " (check whether a datapack removed too much)");
         }
 
         QuestRegistry.setPools(
@@ -84,7 +85,7 @@ public class QuestPoolReloadListener implements PreparableReloadListener {
                 WeightedPool.of(collect, Target::weight),
                 WeightedPool.of(rewards, Reward::weight));
 
-        FriliensMagic.LOGGER.info("已加载委托池: 击杀 {} 条, 收集 {} 条, 奖励 {} 条",
+        FriliensMagic.LOGGER.info("Loaded quest pools: {} kill, {} collect, {} reward entries",
                 kill.size(), collect.size(), rewards.size());
 
         // 只把「真的贡献了条目」的命名空间登记为待通报，避免只放了个空文件也通报

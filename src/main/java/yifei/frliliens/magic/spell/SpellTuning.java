@@ -88,7 +88,8 @@ public final class SpellTuning {
 
     private static void warnMissing(String spellId) {
         FriliensMagic.LOGGER.warn(
-                "法术 {} 没有在 Config 中定义数值，使用兜底值（请在 SpellTuning 的 BY_ID 中登记）",
+                "Spell {} has no Config tuning entry, using fallback values"
+                + " (register it in SpellTuning.BY_ID)",
                 spellId);
     }
 }

@@ -119,7 +119,7 @@ public final class QuestPoolEntry {
             return DataResult.success(value);
         }
         if (min > max) {
-            return DataResult.error(() -> "min(" + min + ") 大于 max(" + max + ")");
+            return DataResult.error(() -> "min (" + min + ") is greater than max (" + max + ")");
         }
         return DataResult.success(value);
     }

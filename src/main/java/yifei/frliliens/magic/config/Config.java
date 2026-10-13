@@ -73,6 +73,24 @@ public final class Config {
             .comment("Interval in ticks to check collect quest progress")
             .defineInRange("questCollectCheckInterval", 100, 20, 600);
 
+    // ===== 欢迎语 =====
+    // 欢迎语以「标题」形式显示（屏幕中央，不是聊天栏），所以需要三个时长。
+
+    /** 欢迎语淡入时长（tick）。 */
+    public static final ModConfigSpec.IntValue WELCOME_TITLE_FADE_IN = BUILDER
+            .comment("Welcome title fade-in time in ticks")
+            .defineInRange("welcomeTitleFadeIn", 10, 0, 200);
+
+    /** 欢迎语停留时长（tick，20 = 1 秒）。 */
+    public static final ModConfigSpec.IntValue WELCOME_TITLE_STAY = BUILDER
+            .comment("Welcome title stay time in ticks (20 = 1 second)")
+            .defineInRange("welcomeTitleStay", 70, 1, 400);
+
+    /** 欢迎语淡出时长（tick）。 */
+    public static final ModConfigSpec.IntValue WELCOME_TITLE_FADE_OUT = BUILDER
+            .comment("Welcome title fade-out time in ticks")
+            .defineInRange("welcomeTitleFadeOut", 20, 0, 200);
+
     // ===== 法术基础数值 =====
     // 每个法术的魔力消耗与冷却。id 必须与 SpellRegistry 里注册的 id 一致，
     // 否则该法术会退回默认值 0 消耗 / 20 冷却（SpellTuning 会打日志提醒）。

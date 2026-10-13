@@ -29,6 +29,8 @@ import yifei.frliliens.magic.handler.ManaRegenHandler;
 import yifei.frliliens.magic.handler.QuestAnnounceHandler;
 import yifei.frliliens.magic.handler.QuestProgressHandler;
 import yifei.frliliens.magic.handler.QuestVillagerHandler;
+import yifei.frliliens.magic.handler.WelcomeHandler;
+import yifei.frliliens.magic.world.WelcomeCommand;
 import yifei.frliliens.magic.quest.QuestCommand;
 import yifei.frliliens.magic.quest.QuestIntegrityCheck;
 import yifei.frliliens.magic.quest.QuestPoolReloadListener;
@@ -72,6 +74,9 @@ public class FriliensMagic {
         NeoForge.EVENT_BUS.register(new QuestProgressHandler());
         NeoForge.EVENT_BUS.register(new QuestAnnounceHandler());
         NeoForge.EVENT_BUS.register(new QuestCommand());
+        // 首次进入存档的欢迎语（数据存主世界，命令可改文案）
+        NeoForge.EVENT_BUS.register(new WelcomeHandler());
+        NeoForge.EVENT_BUS.register(new WelcomeCommand());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
