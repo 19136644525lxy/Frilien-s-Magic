@@ -13,6 +13,7 @@ import net.minecraft.world.phys.AABB;
 
 import yifei.frliliens.magic.attachment.ManaData;
 import yifei.frliliens.magic.attachment.ModAttachments;
+import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
 /**
@@ -23,22 +24,18 @@ import yifei.frliliens.magic.spell.AbstractSpell;
  */
 public class ManaSenseSpell extends AbstractSpell {
 
-    /** 感知半径。 */
-    private static final double RADIUS = 32.0;
-    /** 基础持续时间（tick）。 */
-    private static final int BASE_DURATION = 200;
-
     public ManaSenseSpell() {
         super("mana_sense", 0);
     }
 
     @Override
     protected boolean doCast(Level level, Player caster) {
-        // 持续时间随魔力上限增强：200 + maxMana/10 tick
+        // 持续时间随魔力上限增强
         ManaData mana = caster.getData(ModAttachments.MANA);
-        int duration = BASE_DURATION + mana.max() / 10;
+        int duration = Config.CONCEAL_BASE_DURATION.getAsInt()
+                + mana.max() / Math.max(1, Config.CONCEAL_MANA_PER_TICK.getAsInt());
 
-        AABB area = caster.getBoundingBox().inflate(RADIUS);
+        AABB area = caster.getBoundingBox().inflate(Config.MANA_SENSE_RADIUS.getAsDouble());
         int count = 0;
 
         for (Entity entity : level.getEntities(caster, area)) {

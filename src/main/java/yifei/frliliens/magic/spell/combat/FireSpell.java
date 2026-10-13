@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
+import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
 /**
@@ -27,21 +28,24 @@ public class FireSpell extends AbstractSpell {
     @Override
     protected boolean doCast(Level level, Player caster) {
         Vec3 look = caster.getLookAngle();
-        Vec3 target = caster.position().add(look.scale(8.0));
+        Vec3 target = caster.position().add(look.scale(Config.VOLLZANBEL_RANGE.getAsDouble()));
 
         // 生成火焰效果云（龙息效果）
+        float radius = (float) Config.VOLLZANBEL_RADIUS.getAsDouble();
+        int duration = Config.VOLLZANBEL_DURATION.getAsInt();
         AreaEffectCloud cloud = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, level);
         cloud.setPos(target.x, target.y, target.z);
-        cloud.setRadius(3.0F);
-        cloud.setDuration(100);
-        cloud.setRadiusPerTick(-0.02F);
+        cloud.setRadius(radius);
+        cloud.setDuration(duration);
+        cloud.setRadiusPerTick(-radius / Math.max(1, duration));
         cloud.setWaitTime(0);
         level.addFreshEntity(cloud);
 
         // 在目标点周围点燃方块
         if (level instanceof ServerLevel serverLevel) {
-            for (int dx = -2; dx <= 2; dx++) {
-                for (int dz = -2; dz <= 2; dz++) {
+            int fireRadius = Config.VOLLZANBEL_FIRE_RADIUS.getAsInt();
+            for (int dx = -fireRadius; dx <= fireRadius; dx++) {
+                for (int dz = -fireRadius; dz <= fireRadius; dz++) {
                     BlockPos firePos = BlockPos.containing(target).offset(dx, 0, dz);
                     if (serverLevel.getBlockState(firePos).isAir()
                             && !serverLevel.getBlockState(firePos.below()).isAir()) {

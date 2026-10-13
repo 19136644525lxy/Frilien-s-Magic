@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.damage.ModDamageTypes;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
@@ -27,17 +28,21 @@ public class BlackLightSpell extends AbstractSpell {
 
     @Override
     protected boolean doCast(Level level, Player caster) {
-        // 前方 10 格、宽度 2 格的 AABB
+        // 前方一条矩形作用区，长度与半宽可配置
+        double length = Config.BLACK_LIGHT_LENGTH.getAsDouble();
+        double width = Config.BLACK_LIGHT_WIDTH.getAsDouble();
+        float damage = (float) Config.BLACK_LIGHT_DAMAGE.getAsDouble();
+
         AABB area = caster.getBoundingBox()
-                .expandTowards(caster.getLookAngle().scale(10.0))
-                .inflate(2.0);
+                .expandTowards(caster.getLookAngle().scale(length))
+                .inflate(width);
 
         DamageSource source = ModDamageTypes.magic(caster);
         int hitCount = 0;
 
         for (Entity entity : level.getEntities(caster, area)) {
             if (entity instanceof LivingEntity living && entity != caster) {
-                living.hurt(source, 25.0F);
+                living.hurt(source, damage);
                 hitCount++;
             }
         }
@@ -53,6 +58,6 @@ public class BlackLightSpell extends AbstractSpell {
             serverLevel.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                     SoundEvents.WITHER_SHOOT, SoundSource.PLAYERS, 0.8F, 0.6F);
         }
-        return hitCount >= 0;
+        return true;
     }
 }

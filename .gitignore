@@ -37,9 +37,11 @@ tools/
 blockbench/
 libs/
 texture_converter.py
-芙莉莲魔法汇总.html
 __pycache__/
 *.pyc
+
+# 示例数据包的构建产物（源码是 examples/quest_pools/，zip 由 tools/pack_examples.py 生成）
+examples/dist/
 
 # Trae
 .trae/

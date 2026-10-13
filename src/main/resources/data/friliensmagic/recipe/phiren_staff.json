@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "staves",
+  "pattern": [
+    " BP",
+    "PIA",
+    " S "
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:bone"
+    },
+    "P": {
+      "item": "minecraft:purple_dye"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "friliensmagic:phiren_staff"
+  }
+}

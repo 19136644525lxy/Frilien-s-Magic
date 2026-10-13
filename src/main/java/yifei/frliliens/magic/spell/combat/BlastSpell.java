@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.damage.ModDamageTypes;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
@@ -17,12 +18,6 @@ import yifei.frliliens.magic.spell.AbstractSpell;
  */
 public class BlastSpell extends AbstractSpell {
 
-    /** 爆炸半径。 */
-    private static final float RADIUS = 6.0F;
-
-    /** 伤害值。 */
-    private static final float DAMAGE = 200.0F;
-
     public BlastSpell() {
         super("blast", 70);
     }
@@ -30,14 +25,17 @@ public class BlastSpell extends AbstractSpell {
     @Override
     protected boolean doCast(Level level, Player caster) {
         Vec3 look = caster.getLookAngle();
-        Vec3 target = caster.position().add(look.scale(6.0));
+        Vec3 target = caster.position().add(look.scale(Config.BLAST_RANGE.getAsDouble()));
 
-        // 原版爆炸：破坏地形 + 对实体造成自定义魔法伤害
+        // 原版爆炸：可选破坏地形 + 对实体造成自定义魔法伤害
+        Level.ExplosionInteraction interaction = Config.BLAST_BREAK_BLOCKS.getAsBoolean()
+                ? Level.ExplosionInteraction.BLOCK
+                : Level.ExplosionInteraction.NONE;
         level.explode(caster,
                 ModDamageTypes.magic(caster),
                 null,
                 target.x, target.y, target.z,
-                RADIUS, false, Level.ExplosionInteraction.BLOCK);
+                (float) Config.BLAST_RADIUS.getAsDouble(), false, interaction);
 
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.playSound(null, target.x, target.y, target.z,

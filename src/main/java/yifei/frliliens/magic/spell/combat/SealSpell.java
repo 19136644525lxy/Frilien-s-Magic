@@ -11,12 +11,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
 /**
  * 封印魔法。
  *
  * <p>将周围敌人封印使其无法行动（缓慢 + 失明 + 挖掘疲劳）。
+ * 半径、持续时间与三种效果的等级都在 {@code Config} 里可调。
  */
 public class SealSpell extends AbstractSpell {
 
@@ -26,17 +28,23 @@ public class SealSpell extends AbstractSpell {
 
     @Override
     protected boolean doCast(Level level, Player caster) {
-        AABB area = caster.getBoundingBox().inflate(6.0);
+        double radius = Config.SEAL_RADIUS.getAsDouble();
+        int duration = Config.SEAL_DURATION.getAsInt();
+        int slowLevel = Config.SEAL_SLOWNESS_LEVEL.getAsInt();
+        int blindLevel = Config.SEAL_BLINDNESS_LEVEL.getAsInt();
+        int fatigueLevel = Config.SEAL_FATIGUE_LEVEL.getAsInt();
+
+        AABB area = caster.getBoundingBox().inflate(radius);
         int count = 0;
 
         for (Entity entity : level.getEntities(caster, area)) {
             if (entity instanceof LivingEntity living && entity != caster) {
                 living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-                        160, 4, false, true, true));
+                        duration, slowLevel, false, true, true));
                 living.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
-                        160, 0, false, true, true));
+                        duration, blindLevel, false, true, true));
                 living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN,
-                        160, 3, false, true, true));
+                        duration, fatigueLevel, false, true, true));
                 count++;
             }
         }

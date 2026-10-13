@@ -10,6 +10,7 @@ import net.minecraft.world.level.Level;
 
 import yifei.frliliens.magic.attachment.ManaData;
 import yifei.frliliens.magic.attachment.ModAttachments;
+import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.item.StaffItem;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
@@ -20,18 +21,10 @@ import yifei.frliliens.magic.spell.AbstractSpell;
  * 魔力消耗与冷却随盔甲总缺失耐久动态变化——耐久越低，消耗越高、冷却越长。
  *
  * <p>由于消耗是动态的，{@link #getManaCost()} 与 {@link #getCooldown()} 均返回 0，
- * 由 {@link #doCast} 内部自行计算并扣除魔力、设置法杖冷却。
+ * 由 {@link #doCast} 内部自行计算并扣除魔力、设置法杖冷却。基准值与每点耐久的
+ * 加成都在 {@code Config} 里可调。
  */
 public class CleanSpell extends AbstractSpell {
-
-    /** 基础魔力消耗（无损坏时）。 */
-    private static final int BASE_MANA_COST = 50;
-    /** 每点缺失耐久额外消耗的魔力。 */
-    private static final int MANA_PER_DAMAGE = 2;
-    /** 基础冷却（tick，无损坏时）。 */
-    private static final int BASE_COOLDOWN = 100;
-    /** 每点缺失耐久额外增加的冷却（tick）。 */
-    private static final int COOLDOWN_PER_DAMAGE = 2;
 
     private static final EquipmentSlot[] ARMOR_SLOTS = {
             EquipmentSlot.HEAD, EquipmentSlot.CHEST,
@@ -61,8 +54,10 @@ public class CleanSpell extends AbstractSpell {
         }
 
         // 动态计算消耗与冷却
-        int manaCost = BASE_MANA_COST + totalDamage * MANA_PER_DAMAGE;
-        int cooldown = BASE_COOLDOWN + totalDamage * COOLDOWN_PER_DAMAGE;
+        int manaCost = Config.CLEAN_BASE_MANA.getAsInt()
+                + totalDamage * Config.CLEAN_MANA_PER_DAMAGE.getAsInt();
+        int cooldown = Config.CLEAN_BASE_COOLDOWN.getAsInt()
+                + totalDamage * Config.CLEAN_COOLDOWN_PER_DAMAGE.getAsInt();
 
         // 校验魔力
         ManaData mana = caster.getData(ModAttachments.MANA);

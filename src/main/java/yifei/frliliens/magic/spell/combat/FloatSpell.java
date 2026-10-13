@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
 /**
@@ -23,18 +24,13 @@ import yifei.frliliens.magic.spell.AbstractSpell;
  */
 public class FloatSpell extends AbstractSpell {
 
-    /** 作用半径。 */
-    private static final double RADIUS = 5.0;
-    /** 悬浮持续时间（tick）。 */
-    private static final int DURATION = 60;
-
     public FloatSpell() {
         super("float", 40);
     }
 
     @Override
     protected boolean doCast(Level level, Player caster) {
-        AABB area = caster.getBoundingBox().inflate(RADIUS);
+        AABB area = caster.getBoundingBox().inflate(Config.FLOAT_RADIUS.getAsDouble());
         List<Entity> entities = level.getEntities(caster, area);
 
         int affected = 0;
@@ -44,11 +40,12 @@ public class FloatSpell extends AbstractSpell {
                 continue;
             }
             if (entity instanceof LivingEntity living) {
-                living.addEffect(new MobEffectInstance(MobEffects.LEVITATION, DURATION, 0,
-                        false, true, true));
+                living.addEffect(new MobEffectInstance(MobEffects.LEVITATION,
+                        Config.FLOAT_DURATION.getAsInt(), 0, false, true, true));
             } else {
                 // 非生物实体（物品、经验球等）给一个向上的速度
-                entity.setDeltaMovement(entity.getDeltaMovement().add(0, 0.4, 0));
+                entity.setDeltaMovement(entity.getDeltaMovement()
+                        .add(0, Config.FLOAT_IMPULSE.getAsDouble(), 0));
                 entity.hurtMarked = true;
             }
             affected++;
@@ -58,6 +55,7 @@ public class FloatSpell extends AbstractSpell {
             serverLevel.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                     SoundEvents.ENDER_DRAGON_FLAP, SoundSource.PLAYERS, 0.5F, 1.8F);
         }
-        return affected > 0 || true; // 空放也算成功（消耗魔力）
+        // 空放也算成功（照样消耗魔力）
+        return true;
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
+import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
 /**
@@ -24,11 +25,12 @@ public class ManaStrikeSpell extends AbstractSpell {
     @Override
     protected boolean doCast(Level level, Player caster) {
         // 力量提升 + 速度提升 + 急迫，模拟魔力压缩的近战强化
-        caster.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 200, 2,
-                false, true, true));
-        caster.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, 1,
-                false, true, true));
-        caster.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 200, 1,
+        int duration = Config.MANA_STRIKE_DURATION.getAsInt();
+        caster.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, duration,
+                Config.MANA_STRIKE_STRENGTH.getAsInt(), false, true, true));
+        caster.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration,
+                Config.MANA_STRIKE_SPEED.getAsInt(), false, true, true));
+        caster.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, duration, 1,
                 false, true, true));
 
         if (level instanceof ServerLevel serverLevel) {

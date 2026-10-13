@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
+import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
 /**
@@ -26,7 +27,7 @@ public class LightningSpell extends AbstractSpell {
 
     @Override
     protected boolean doCast(Level level, Player caster) {
-        HitResult hit = caster.pick(30.0, 0.0F, false);
+        HitResult hit = caster.pick(Config.JUDRADJIM_RANGE.getAsDouble(), 0.0F, false);
         BlockPos pos;
         if (hit.getType() == HitResult.Type.BLOCK) {
             pos = ((BlockHitResult) hit).getBlockPos();
@@ -34,10 +35,12 @@ public class LightningSpell extends AbstractSpell {
             pos = caster.blockPosition().relative(caster.getDirection(), 5);
         }
 
-        // 在目标点周围召唤 3 道闪电
-        for (int i = 0; i < 3; i++) {
-            int ox = (int) (caster.getRandom().nextGaussian() * 2);
-            int oz = (int) (caster.getRandom().nextGaussian() * 2);
+        // 在目标点周围召唤若干道闪电
+        int bolts = Config.JUDRADJIM_BOLTS.getAsInt();
+        double spread = Config.JUDRADJIM_SPREAD.getAsDouble();
+        for (int i = 0; i < bolts; i++) {
+            int ox = (int) (caster.getRandom().nextGaussian() * spread);
+            int oz = (int) (caster.getRandom().nextGaussian() * spread);
             BlockPos strikePos = pos.offset(ox, 0, oz);
 
             LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level);

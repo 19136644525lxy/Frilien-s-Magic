@@ -15,6 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import yifei.frliliens.magic.attachment.ModAttachments;
+import yifei.frliliens.magic.config.Config;
 import yifei.frliliens.magic.damage.ModDamageTypes;
 import yifei.frliliens.magic.spell.AbstractSpell;
 
@@ -26,12 +27,6 @@ import yifei.frliliens.magic.spell.AbstractSpell;
  */
 public class ZoltraakSpell extends AbstractSpell {
 
-    /** 基础射程（未学习长距离魔法时）。 */
-    private static final double BASE_RANGE = 30.0;
-
-    /** 激光伤害（无视护甲，穿透一切）。 */
-    private static final float DAMAGE = 520.0F;
-
     public ZoltraakSpell() {
         super("zoltraak", 50);
     }
@@ -39,7 +34,7 @@ public class ZoltraakSpell extends AbstractSpell {
     @Override
     protected boolean doCast(Level level, Player caster) {
         // 计算射程：学习长距离魔法后射程 = 视距 * 倍率，倍率随魔力上限增强
-        double range = BASE_RANGE;
+        double range = Config.ZOLTRAAK_RANGE.getAsDouble();
         boolean hasLongRange = caster.getData(ModAttachments.LEARNED_SPELLS)
                 .hasLearned("long_range");
         if (hasLongRange) {
@@ -47,10 +42,15 @@ public class ZoltraakSpell extends AbstractSpell {
                     ? level.getServer().getPlayerList().getViewDistance()
                     : 10;
             int maxMana = caster.getData(ModAttachments.MANA).max();
-            // 基础 16 倍，每 500 魔力上限 +1 倍
-            double multiplier = 16.0 + maxMana / 500.0;
+            // 基础倍率 + 每 manaPerStep 点魔力上限 +1 倍
+            double baseMultiplier = Config.ZOLTRAAK_RANGE_MULTIPLIER.getAsDouble();
+            double manaPerStep = Math.max(1.0, Config.ZOLTRAAK_MANA_PER_MULTIPLIER.getAsDouble());
+            double multiplier = baseMultiplier + maxMana / manaPerStep;
             range = renderDistance * multiplier;
         }
+
+        double damageRadius = Config.ZOLTRAAK_DAMAGE_RADIUS.getAsDouble();
+        float damage = (float) Config.ZOLTRAAK_DAMAGE.getAsDouble();
 
         Vec3 eyePos = caster.getEyePosition();
         Vec3 look = caster.getLookAngle();
@@ -64,7 +64,7 @@ public class ZoltraakSpell extends AbstractSpell {
         int hitCount = 0;
         Vec3 dir = look.normalize();
         for (Entity entity : level.getEntities(caster,
-                new AABB(eyePos, endPos).inflate(DAMAGE_RADIUS))) {
+                new AABB(eyePos, endPos).inflate(damageRadius))) {
             if (!(entity instanceof LivingEntity living) || entity == caster) {
                 continue;
             }
@@ -75,8 +75,8 @@ public class ZoltraakSpell extends AbstractSpell {
                 continue;
             }
             double perpDist = toEntity.subtract(dir.scale(proj)).length();
-            if (perpDist <= DAMAGE_RADIUS) {
-                living.hurt(source, DAMAGE);
+            if (perpDist <= damageRadius) {
+                living.hurt(source, damage);
                 hitCount++;
             }
         }
@@ -91,11 +91,11 @@ public class ZoltraakSpell extends AbstractSpell {
         return true;
     }
 
-    /** 光柱视觉半径（圆柱体）。 */
+    /** 光柱视觉半径（圆柱体）。纯视觉，不参与伤害判定。 */
     private static final double BEAM_RADIUS = 0.6;
 
-    /** 伤害判定半径（路径上此距离内的实体均受伤）。 */
-    private static final double DAMAGE_RADIUS = 5.0;
+    /** 沿光柱方向的采样密度（粒子批数/格）。 */
+    private static final double STEPS_PER_BLOCK = 8.0;
 
     /**
      * 沿射线生成圆柱体蓝白光柱。
@@ -119,8 +119,8 @@ public class ZoltraakSpell extends AbstractSpell {
         Vec3 right = dir.cross(up).normalize();
         Vec3 orthoUp = dir.cross(right).normalize();
 
-        // 沿光柱方向的采样步长（密度 8/格）
-        int steps = Math.max(1, (int) (length * 8));
+        // 沿光柱方向的采样步长
+        int steps = Math.max(1, (int) (length * STEPS_PER_BLOCK));
 
         DustParticleOptions coreParticle = new DustParticleOptions(
                 new Vector3f(0.95F, 0.97F, 1.0F), 2.0F);
