@@ -48,3 +48,14 @@ examples/dist/
 
 # HTML exports
 *.html
+
+# 1.20.1 移植版的本地文件（不进版本库，但保留在工作区）
+#
+# 这三个是移植过程的工作文件：
+#   PORTING.md      移植笔记，含 API 差异对照表
+#   .gitattributes  行尾约定（本地用）
+#   .gitignore      排除规则本身
+# 只提交源码与素材，保持仓库干净。
+1.20.1/PORTING.md
+1.20.1/.gitattributes
+1.20.1/.gitignore
