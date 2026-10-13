@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import yifei.frliliens.magic.FriliensMagic;
 import yifei.frliliens.magic.attachment.ModAttachments;
 import yifei.frliliens.magic.config.Config;
 
@@ -84,8 +85,19 @@ public final class QuestManager {
         }
 
         // 随机奖励
-        QuestRegistry.RewardEntry reward = QuestRegistry.rollReward(player.serverLevel());
-        ItemStack rewardStack = reward.createStack(player.serverLevel());
+        QuestPoolEntry.Reward reward = QuestRegistry.rollReward(player.serverLevel());
+        if (reward == null) {
+            // 奖励池为空（正常流程不会发生：重载时空池会回退内置默认值）
+            FriliensMagic.LOGGER.error("奖励池为空，未能发放奖励");
+            return true;
+        }
+        ItemStack rewardStack = reward.createStack(player.serverLevel().getRandom());
+        if (rewardStack.isEmpty()) {
+            // 物品 id 不存在（数据包写错）。自检会报出来，这里避免发空物品并提示玩家。
+            player.sendSystemMessage(Component.translatable(
+                    "quest.friliensmagic.reward_invalid", reward.item()));
+            return true;
+        }
 
         // 先保存显示信息（add 会修改原栈导致 count 归零）
         Component rewardName = rewardStack.getHoverName();

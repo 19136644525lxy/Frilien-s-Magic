@@ -11,8 +11,10 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -24,9 +26,12 @@ import yifei.frliliens.magic.entity.ModEntities;
 import yifei.frliliens.magic.handler.FlightHandler;
 import yifei.frliliens.magic.handler.ManaConcealHandler;
 import yifei.frliliens.magic.handler.ManaRegenHandler;
+import yifei.frliliens.magic.handler.QuestAnnounceHandler;
 import yifei.frliliens.magic.handler.QuestProgressHandler;
 import yifei.frliliens.magic.handler.QuestVillagerHandler;
 import yifei.frliliens.magic.quest.QuestCommand;
+import yifei.frliliens.magic.quest.QuestIntegrityCheck;
+import yifei.frliliens.magic.quest.QuestPoolReloadListener;
 import yifei.frliliens.magic.item.ModCreativeTabs;
 import yifei.frliliens.magic.item.ModItems;
 import yifei.frliliens.magic.loot.ModLootModifiers;
@@ -65,9 +70,20 @@ public class FriliensMagic {
         NeoForge.EVENT_BUS.register(new ManaConcealHandler());
         NeoForge.EVENT_BUS.register(new QuestVillagerHandler());
         NeoForge.EVENT_BUS.register(new QuestProgressHandler());
+        NeoForge.EVENT_BUS.register(new QuestAnnounceHandler());
         NeoForge.EVENT_BUS.register(new QuestCommand());
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+    }
+
+    /**
+     * 注册数据包重载监听器：委托池在每次数据包重载（启动、{@code /reload}）时重建。
+     *
+     * <p>这样数据包作者改完 JSON 用 {@code /reload} 就能生效，不必重启游戏。
+     */
+    @SubscribeEvent
+    public void onAddReloadListener(AddReloadListenerEvent event) {
+        event.addListener(new QuestPoolReloadListener());
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -106,5 +122,16 @@ public class FriliensMagic {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         LOGGER.info("Frilien's Magic loaded on the server");
+    }
+
+    /**
+     * 服务端完全就绪后跑一次数据自检。
+     *
+     * <p>放在这里而不是 {@code FMLCommonSetupEvent}：那时服务端还没创建，
+     * 拿不到资源管理器，扫不了 loot_modifiers。
+     */
+    @SubscribeEvent
+    public void onServerStarted(ServerStartedEvent event) {
+        QuestIntegrityCheck.run(event.getServer());
     }
 }

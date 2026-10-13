@@ -73,7 +73,269 @@ public final class Config {
             .comment("Interval in ticks to check collect quest progress")
             .defineInRange("questCollectCheckInterval", 100, 20, 600);
 
+    // ===== 法术基础数值 =====
+    // 每个法术的魔力消耗与冷却。id 必须与 SpellRegistry 里注册的 id 一致，
+    // 否则该法术会退回默认值 0 消耗 / 20 冷却（SpellTuning 会打日志提醒）。
+
+    /** 攻击魔法 Zoltraak。 */
+    public static final SpellSettings ZOLTRAAK = spell("zoltraak", 50, 20);
+    /** 防御魔法。 */
+    public static final SpellSettings DEFENSE = spell("defense", 80, 20);
+    /** 飞行魔法。 */
+    public static final SpellSettings FLIGHT = spell("flight", 60, 20);
+    /** 破灭之雷 Judradjim。 */
+    public static final SpellSettings JUDRADJIM = spell("judradjim", 120, 20);
+    /** 地狱业火 Vollzanbel。 */
+    public static final SpellSettings VOLLZANBEL = spell("vollzanbel", 150, 20);
+    /** 破坏黑光。 */
+    public static final SpellSettings BLACK_LIGHT = spell("black_light", 200, 20);
+    /** 魔力挤压 Mana Strike。 */
+    public static final SpellSettings MANA_STRIKE = spell("mana_strike", 100, 20);
+    /** 封印魔法。 */
+    public static final SpellSettings SEAL = spell("seal", 90, 20);
+    /** 爆破魔法。 */
+    public static final SpellSettings BLAST = spell("blast", 70, 20);
+    /** 变出刨冰。 */
+    public static final SpellSettings SHAVED_ICE = spell("shaved_ice", 10, 20);
+    /** 漂浮魔法。 */
+    public static final SpellSettings FLOAT = spell("float", 40, 20);
+    /** 清洁魔法（消耗是动态的，见 COOLDOWN/CLEAN_* ）。 */
+    public static final SpellSettings CLEAN = spell("clean", 0, 20);
+    /** 魔力探知（基础能力，不耗魔力）。 */
+    public static final SpellSettings MANA_SENSE = spell("mana_sense", 0, 20);
+    /** 魔力隐藏（基础能力，不耗魔力）。 */
+    public static final SpellSettings MANA_HIDE = spell("mana_hide", 0, 20);
+    /** 长距离魔法（被动，无消耗无冷却）。 */
+    public static final SpellSettings LONG_RANGE = spell("long_range", 0, 0);
+
+    // ===== 各法术的可调数值 =====
+
+    /** 攻击魔法：基础射程（未学「长距离魔法」时，单位格）。 */
+    public static final ModConfigSpec.DoubleValue ZOLTRAAK_RANGE = BUILDER
+            .comment("Zoltraak base range in blocks (before learning Long Range)")
+            .defineInRange("zoltraakRange", 30.0D, 1.0D, 256.0D);
+
+    /** 攻击魔法：伤害。 */
+    public static final ModConfigSpec.DoubleValue ZOLTRAAK_DAMAGE = BUILDER
+            .comment("Zoltraak damage per hit")
+            .defineInRange("zoltraakDamage", 520.0D, 0.0D, 100000.0D);
+
+    /** 攻击魔法：伤害判定半径（注意：大于视觉光柱半径）。 */
+    public static final ModConfigSpec.DoubleValue ZOLTRAAK_DAMAGE_RADIUS = BUILDER
+            .comment("Zoltraak damage radius in blocks; the damage cylinder is wider"
+                    + " than the visible beam")
+            .defineInRange("zoltraakDamageRadius", 5.0D, 0.1D, 32.0D);
+
+    /** 攻击魔法：学「长距离魔法」后的视距倍率基数。 */
+    public static final ModConfigSpec.DoubleValue ZOLTRAAK_RANGE_MULTIPLIER = BUILDER
+            .comment("Zoltraak range = viewDistance * this, once Long Range is learned")
+            .defineInRange("zoltraakRangeMultiplier", 16.0D, 1.0D, 64.0D);
+
+    /** 攻击魔法：每多少点魔力上限额外 +1 倍率。 */
+    public static final ModConfigSpec.DoubleValue ZOLTRAAK_MANA_PER_MULTIPLIER = BUILDER
+            .comment("Extra Zoltraak range multiplier per this much max mana")
+            .defineInRange("zoltraakManaPerMultiplier", 500.0D, 1.0D, 100000.0D);
+
+    /** 破坏黑光：伤害。 */
+    public static final ModConfigSpec.DoubleValue BLACK_LIGHT_DAMAGE = BUILDER
+            .comment("Black Light damage per hit")
+            .defineInRange("blackLightDamage", 25.0D, 0.0D, 100000.0D);
+
+    /** 破坏黑光：作用长度（格）。 */
+    public static final ModConfigSpec.DoubleValue BLACK_LIGHT_LENGTH = BUILDER
+            .comment("Black Light reach in blocks")
+            .defineInRange("blackLightLength", 10.0D, 1.0D, 128.0D);
+
+    /** 破坏黑光：作用半宽（格）。 */
+    public static final ModConfigSpec.DoubleValue BLACK_LIGHT_WIDTH = BUILDER
+            .comment("Black Light beam half-width in blocks")
+            .defineInRange("blackLightWidth", 2.0D, 0.1D, 32.0D);
+
+    /** 破灭之雷：落点选取距离（格）。 */
+    public static final ModConfigSpec.DoubleValue JUDRADJIM_RANGE = BUILDER
+            .comment("Judradjim target picking distance in blocks")
+            .defineInRange("judradjimRange", 30.0D, 1.0D, 128.0D);
+
+    /** 破灭之雷：同时召唤的闪电道数。 */
+    public static final ModConfigSpec.IntValue JUDRADJIM_BOLTS = BUILDER
+            .comment("How many lightning bolts Judradjim summons")
+            .defineInRange("judradjimBolts", 3, 1, 32);
+
+    /** 破灭之雷：散布半径（格，按高斯分布）。 */
+    public static final ModConfigSpec.DoubleValue JUDRADJIM_SPREAD = BUILDER
+            .comment("Judradjim lightning scatter radius in blocks (gaussian sigma)")
+            .defineInRange("judradjimSpread", 2.0D, 0.0D, 16.0D);
+
+    /** 地狱业火：施法距离（格）。 */
+    public static final ModConfigSpec.DoubleValue VOLLZANBEL_RANGE = BUILDER
+            .comment("Vollzanbel cast distance in blocks")
+            .defineInRange("vollzanbelRange", 8.0D, 1.0D, 64.0D);
+
+    /** 地狱业火：火焰云半径（格）。 */
+    public static final ModConfigSpec.DoubleValue VOLLZANBEL_RADIUS = BUILDER
+            .comment("Vollzanbel flame cloud radius in blocks")
+            .defineInRange("vollzanbelRadius", 3.0D, 0.5D, 16.0D);
+
+    /** 地狱业火：火焰云持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue VOLLZANBEL_DURATION = BUILDER
+            .comment("Vollzanbel flame cloud duration in ticks")
+            .defineInRange("vollzanbelDuration", 100, 20, 2400);
+
+    /** 地狱业火：点燃地面的方形半径（格）。 */
+    public static final ModConfigSpec.IntValue VOLLZANBEL_FIRE_RADIUS = BUILDER
+            .comment("Vollzanbel ground fire square radius in blocks")
+            .defineInRange("vollzanbelFireRadius", 2, 0, 8);
+
+    /** 爆破魔法：施法距离（格）。 */
+    public static final ModConfigSpec.DoubleValue BLAST_RANGE = BUILDER
+            .comment("Blast cast distance in blocks")
+            .defineInRange("blastRange", 6.0D, 1.0D, 64.0D);
+
+    /** 爆破魔法：爆炸半径（格）。 */
+    public static final ModConfigSpec.DoubleValue BLAST_RADIUS = BUILDER
+            .comment("Blast explosion radius in blocks")
+            .defineInRange("blastRadius", 6.0D, 1.0D, 32.0D);
+
+    /** 爆破魔法：是否破坏地形。 */
+    public static final ModConfigSpec.BooleanValue BLAST_BREAK_BLOCKS = BUILDER
+            .comment("Whether Blast destroys terrain")
+            .define("blastBreakBlocks", true);
+
+    /** 封印魔法：作用半径（格）。 */
+    public static final ModConfigSpec.DoubleValue SEAL_RADIUS = BUILDER
+            .comment("Seal effect radius in blocks")
+            .defineInRange("sealRadius", 6.0D, 1.0D, 32.0D);
+
+    /** 封印魔法：负面效果持续（tick）。 */
+    public static final ModConfigSpec.IntValue SEAL_DURATION = BUILDER
+            .comment("Seal debuff duration in ticks")
+            .defineInRange("sealDuration", 160, 20, 7200);
+
+    /** 封印魔法：缓慢效果等级（0 = I 级）。 */
+    public static final ModConfigSpec.IntValue SEAL_SLOWNESS_LEVEL = BUILDER
+            .comment("Seal Slowness amplifier (0 = level I)")
+            .defineInRange("sealSlownessLevel", 4, 0, 9);
+
+    /** 封印魔法：失明效果等级（0 = I 级）。 */
+    public static final ModConfigSpec.IntValue SEAL_BLINDNESS_LEVEL = BUILDER
+            .comment("Seal Blindness amplifier (0 = level I)")
+            .defineInRange("sealBlindnessLevel", 0, 0, 9);
+
+    /** 封印魔法：挖掘疲劳效果等级（0 = I 级）。 */
+    public static final ModConfigSpec.IntValue SEAL_FATIGUE_LEVEL = BUILDER
+            .comment("Seal Mining Fatigue amplifier (0 = level I)")
+            .defineInRange("sealFatigueLevel", 3, 0, 9);
+
+    /** 漂浮魔法：作用半径（格）。 */
+    public static final ModConfigSpec.DoubleValue FLOAT_RADIUS = BUILDER
+            .comment("Float effect radius in blocks")
+            .defineInRange("floatRadius", 5.0D, 1.0D, 32.0D);
+
+    /** 漂浮魔法：悬浮持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue FLOAT_DURATION = BUILDER
+            .comment("Float levitation duration in ticks")
+            .defineInRange("floatDuration", 60, 10, 1200);
+
+    /** 漂浮魔法：对非生物实体施加的向上初速。 */
+    public static final ModConfigSpec.DoubleValue FLOAT_IMPULSE = BUILDER
+            .comment("Upward velocity Float applies to non-living entities")
+            .defineInRange("floatImpulse", 0.4D, 0.0D, 8.0D);
+
+    /** 魔力挤压：增益持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue MANA_STRIKE_DURATION = BUILDER
+            .comment("Mana Strike buff duration in ticks")
+            .defineInRange("manaStrikeDuration", 200, 20, 7200);
+
+    /** 魔力挤压：力量效果等级（0 = I 级）。 */
+    public static final ModConfigSpec.IntValue MANA_STRIKE_STRENGTH = BUILDER
+            .comment("Mana Strike Strength amplifier (0 = level I)")
+            .defineInRange("manaStrikeStrength", 2, 0, 9);
+
+    /** 魔力挤压：速度效果等级（0 = I 级）。 */
+    public static final ModConfigSpec.IntValue MANA_STRIKE_SPEED = BUILDER
+            .comment("Mana Strike Speed amplifier (0 = level I)")
+            .defineInRange("manaStrikeSpeed", 1, 0, 9);
+
+    /** 魔力探知：感知半径（格）。 */
+    public static final ModConfigSpec.DoubleValue MANA_SENSE_RADIUS = BUILDER
+            .comment("Mana Sense radius in blocks")
+            .defineInRange("manaSenseRadius", 32.0D, 1.0D, 256.0D);
+
+    /** 魔力探知／隐藏：基础持续时间（tick）。 */
+    public static final ModConfigSpec.IntValue CONCEAL_BASE_DURATION = BUILDER
+            .comment("Base duration in ticks for Mana Sense / Mana Hide")
+            .defineInRange("concealBaseDuration", 200, 20, 7200);
+
+    /** 魔力探知／隐藏：每多少点魔力上限额外 +1 tick。 */
+    public static final ModConfigSpec.IntValue CONCEAL_MANA_PER_TICK = BUILDER
+            .comment("Extra ticks for Mana Sense / Mana Hide per this much max mana")
+            .defineInRange("concealManaPerTick", 10, 1, 100000);
+
+    /** 清洁魔法：基础魔力消耗。 */
+    public static final ModConfigSpec.IntValue CLEAN_BASE_MANA = BUILDER
+            .comment("Clean spell base mana cost")
+            .defineInRange("cleanBaseMana", 50, 0, 100000);
+
+    /** 清洁魔法：每 1 点耐久修复额外消耗的魔力。 */
+    public static final ModConfigSpec.IntValue CLEAN_MANA_PER_DAMAGE = BUILDER
+            .comment("Extra mana per point of durability repaired by Clean")
+            .defineInRange("cleanManaPerDamage", 2, 0, 1000);
+
+    /** 清洁魔法：基础冷却（tick）。 */
+    public static final ModConfigSpec.IntValue CLEAN_BASE_COOLDOWN = BUILDER
+            .comment("Clean spell base cooldown in ticks")
+            .defineInRange("cleanBaseCooldown", 100, 0, 72000);
+
+    /** 清洁魔法：每 1 点耐久修复额外增加的冷却（tick）。 */
+    public static final ModConfigSpec.IntValue CLEAN_COOLDOWN_PER_DAMAGE = BUILDER
+            .comment("Extra cooldown ticks per point of durability repaired by Clean")
+            .defineInRange("cleanCooldownPerDamage", 2, 0, 1000);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
+
+    /**
+     * 定义一个法术的魔力消耗与冷却。
+     *
+     * <p>配置键用 camelCase（如 {@code mana_sense} → {@code manaSenseManaCost}），
+     * 和文件里其它配置项保持一致的风格；法术 id 本身仍用下划线形式。
+     *
+     * @param id       法术 id，必须与 {@code SpellRegistry} 中注册的一致
+     * @param manaCost 默认魔力消耗
+     * @param cooldown 默认冷却（tick）
+     */
+    private static SpellSettings spell(String id, int manaCost, int cooldown) {
+        String key = toCamelCase(id);
+        return new SpellSettings(
+                BUILDER.comment("Mana cost of " + id)
+                        .defineInRange(key + "ManaCost", manaCost, 0, 1000000),
+                BUILDER.comment("Cooldown of " + id + " in ticks (20 = 1 second)")
+                        .defineInRange(key + "Cooldown", cooldown, 0, 72000));
+    }
+
+    /** 把 {@code mana_sense} 这样的 id 转成 {@code manaSense}。 */
+    private static String toCamelCase(String id) {
+        StringBuilder sb = new StringBuilder(id.length());
+        boolean upper = false;
+        for (char c : id.toCharArray()) {
+            if (c == '_') {
+                upper = true;
+            } else {
+                sb.append(upper ? Character.toUpperCase(c) : c);
+                upper = false;
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 单个法术的基础数值。
+     *
+     * @param manaCost 魔力消耗配置项
+     * @param cooldown 冷却配置项（tick）
+     */
+    public record SpellSettings(ModConfigSpec.IntValue manaCost,
+                                ModConfigSpec.IntValue cooldown) {
+    }
 
     private Config() {
     }
